@@ -28,7 +28,7 @@ revolution in a C program.  It is included with version 4.9.0 of
 
 \section download-c Downloading the source
 
-The C library is part of %GeographicLib which available for download at
+The C library is part of GeographicLib which available for download at
 - <a href="https://sourceforge.net/projects/geographiclib/files/distrib/GeographicLib-1.52.tar.gz">
   GeographicLib-1.52.tar.gz</a>
 - <a href="https://sourceforge.net/projects/geographiclib/files/distrib/GeographicLib-1.52.zip">
@@ -138,8 +138,7 @@ echo 30 0 29.5 179.5 | ./inverse \endverbatim
   GeographicLib web site</a>
   - Documentation on the C++ classes: GeographicLib::Geodesic,
     GeographicLib::GeodesicLine, GeographicLib::PolygonAreaT.
-  - The section in the %GeographicLib documentation on geodesics: \ref
-    geodesic.
+  - The section in the GeographicLib documentation on geodesics.
 - <a href="https://sourceforge.net/p/geographiclib/code/ci/release/tree/">
   git repository</a>
 - Implementations in various languages

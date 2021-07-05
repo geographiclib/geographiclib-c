@@ -1,6 +1,15 @@
 project (GeographicLib-C C)
 
-cmake_minimum_required (VERSION 3.1.0)
+# Version information
+set (PROJECT_VERSION_MAJOR 2)
+set (PROJECT_VERSION_MINOR 0)
+set (PROJECT_VERSION_PATCH 0)
+set (PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
+if (PROJECT_VERSION_PATCH GREATER 0)
+  set (PROJECT_VERSION "${PROJECT_VERSION}.${PROJECT_VERSION_PATCH}")
+endif ()
+
+cmake_minimum_required (VERSION 3.13.0)
 
 # Set a default build type for single-configuration cmake generators if
 # no build type is set.
@@ -66,14 +75,8 @@ if (CONVERT_WARNINGS_TO_ERRORS)
   endif ()
 endif ()
 
+set (LIBNAME geodc)
 set (TOOLS direct inverse planimeter geodtest)
-
-foreach (TOOL ${TOOLS})
-  add_executable (${TOOL} ${TOOL}.c geodesic.c geodesic.h)
-  if (NOT MSVC)
-    target_link_libraries (${TOOL} m)
-  endif ()
-endforeach ()
 
 if (MSVC OR CMAKE_CONFIGURATION_TYPES)
   # Add _d suffix for your debug versions of the tools
@@ -81,8 +84,17 @@ if (MSVC OR CMAKE_CONFIGURATION_TYPES)
     DEBUG_POSTFIX _d)
 endif ()
 
-# Turn on testing
-enable_testing ()
+add_subdirectory (src)
+add_subdirectory (tools)
 
+enable_testing ()
 # Run the test suite
 add_test (NAME geodtest COMMAND geodtest)
+
+# The documentation depends on doxygen.
+if (BUILD_DOCUMENTATION)
+  set (DOXYGEN_SKIP_DOT ON)
+  # Version 1.8.7 or later needed for &hellip;
+  find_package (Doxygen 1.8.7)
+  add_subdirectory (doc)
+endif ()
