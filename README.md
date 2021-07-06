@@ -1,4 +1,4 @@
-#  C implementation of the geodesic routines in GeographicLib
+# C implementation of the geodesic routines in GeographicLib
 
 The algorithms are documented in
 

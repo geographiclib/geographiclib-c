@@ -95,6 +95,6 @@ add_test (NAME geodtest COMMAND geodtest)
 if (BUILD_DOCUMENTATION)
   set (DOXYGEN_SKIP_DOT ON)
   # Version 1.8.7 or later needed for &hellip;
-  find_package (Doxygen 1.8.7)
+  find_package (Doxygen 1.8.7 REQUIRED)
   add_subdirectory (doc)
 endif ()

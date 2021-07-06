@@ -24,7 +24,8 @@ This is a C implementation of the geodesic algorithms from
 is a self-contained library (requiring only the standard C math library)
 which makes it easy to do geodesic computations for an ellipsoid of
 revolution in a C program.  It is included with version 4.9.0 of
-<a href="https://proj.org">PROJ</a> and later.  It uses ANSI C99.
+<a href="https://proj.org">PROJ</a> (released 2014-09-13) and later.  It
+uses ANSI C99.
 
 \section download-c Downloading the source
 
@@ -41,8 +42,8 @@ The library consists of two files geodesic.c and geodesic.h.
 The library is also included as part of
 <a href="https://proj.org">PROJ</a> starting with
 version 4.9.0, where it is used as the computational backend for
-<a href="https://github.com/OSGeo/proj.4/wiki/Mangeod">geod(1)</a>.
-Instructions for how to use the library via proj.4 are given below.
+<a href="https://proj.org/apps/geod.html">geod(1)</a>.
+Instructions for how to use the library via PROJ are given below.
 
 Licensed under the
 <a href="https://www.opensource.org/licenses/MIT">MIT/X11 License</a>; see
@@ -80,12 +81,12 @@ make
 make test
 echo 30 0 29.5 179.5 | ./inverse \endverbatim
 
-Alternatively, if you have proj.4 installed, you can compile and link
+Alternatively, if you have PROJ installed, you can compile and link
 with \verbatim
 cc -c inverse.c
 cc -o inverse inverse.o -lproj
 echo 30 0 29.5 179.5 | ./inverse \endverbatim
-If proj.4 is installed, e.g., in /usr/local, you might have to use
+If PROJ is installed, e.g., in /usr/local, you might have to use
 \verbatim
 cc -c -I/usr/local/include inverse.c
 cc -o inverse inverse.o -lproj -L/usr/local/lib -Wl,-rpath=/usr/local/lib
@@ -96,21 +97,13 @@ echo 30 0 29.5 179.5 | ./inverse \endverbatim
 - Put @code{.c}
   #include "geodesic.h"
   @endcode
-  in your source code.  If you are using the library via proj.4, change
+  in your source code.  If you are using the library via PROJ, change
   this to @code{.c}
   #include <geodesic.h>
   @endcode
 - Make calls to the geodesic routines from your code.  The interface to
   the library is documented in geodesic.h.
 - Compile and link as described above.
-- If linking with proj.4, you might want to check that the version of
-  proj.4 contains the geodesic routines.  You can do this with @code{.c}
-  #include <proj_api.h>
-  #if PJ_VERSION >= 490
-  #include <geodesic.h>
-  #endif
-  ...
-  @endcode
 
 - You can check the version of the geodesic library with, e.g.,
   @code{.c}
