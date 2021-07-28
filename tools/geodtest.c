@@ -827,6 +827,20 @@ static int GeodSolve92() {
   return result;
 }
 
+static int GeodSolve94() {
+  /* Check fix for lat2 = nan being treated as lat2 = 0 (bug found
+   * 2021-07-26) */
+  double azi1, azi2, s12;
+  struct geod_geodesic g;
+  int result = 0;
+  geod_init(&g, wgs84_a, wgs84_f);
+  geod_inverse(&g, 0, 0, nan("0"), 90, &s12, &azi1, &azi2);
+  result += checkNaN(azi1);
+  result += checkNaN(azi2);
+  result += checkNaN(s12);
+  return result;
+}
+
 static int Planimeter0() {
   /* Check fix for pole-encircling bug found 2011-03-16 */
   double pa[4][2] = {{89, 0}, {89, 90}, {89, 180}, {89, 270}};
@@ -1114,6 +1128,7 @@ int main() {
   if ((i = GeodSolve80())) {++n; printf("GeodSolve80 fail: %d\n", i);}
   if ((i = GeodSolve84())) {++n; printf("GeodSolve84 fail: %d\n", i);}
   if ((i = GeodSolve92())) {++n; printf("GeodSolve92 fail: %d\n", i);}
+  if ((i = GeodSolve94())) {++n; printf("GeodSolve94 fail: %d\n", i);}
   if ((i = Planimeter0())) {++n; printf("Planimeter0 fail: %d\n", i);}
   if ((i = Planimeter5())) {++n; printf("Planimeter5 fail: %d\n", i);}
   if ((i = Planimeter6())) {++n; printf("Planimeter6 fail: %d\n", i);}
