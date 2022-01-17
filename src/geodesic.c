@@ -164,7 +164,8 @@ static real AngDiff(real x, real y, real* e) {
 }
 
 static real AngRound(real x) {
-  const real z = 1/(real)(16);
+  /* False positive in cppcheck requires "(real)(1)" instead of "1" */
+  const real z = (real)(1)/(real)(16);
   volatile real y;
   if (x == 0) return 0;
   y = fabs(x);
