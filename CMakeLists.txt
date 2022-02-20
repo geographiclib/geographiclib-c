@@ -11,6 +11,8 @@ endif ()
 
 cmake_minimum_required (VERSION 3.13.0)
 
+option (CONVERT_WARNINGS_TO_ERRORS "Convert warnings into errors?" OFF)
+
 # Set a default build type for single-configuration cmake generators if
 # no build type is set.
 if (NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
@@ -47,26 +49,6 @@ if (CMAKE_C_COMPILER_ID STREQUAL "Intel")
   endif ()
 endif ()
 
-include (CheckCSourceCompiles)
-if (MSVC)
-  set (CMAKE_REQUIRED_FLAGS "${CMAKE_C_FLAGS} /WX")
-else ()
-  set (CMAKE_REQUIRED_LIBRARIES m)
-  set (CMAKE_REQUIRED_FLAGS "${CMAKE_C_FLAGS} -Werror")
-endif ()
-# Check whether the C99 math function: hypot, atanh, etc. are available.
-check_c_source_compiles (
-  "#include <math.h>
-int main() {
-  int q = 0;
-  return (int)(hypot(3.0, 4.0) + atanh(0.8) + copysign(1.0, -0.0) +
-               cbrt(8.0) + remainder(100.0, 90.0) +
-               remquo(100.0, 90.0, &q));
-}\n" C99_MATH)
-if (NOT C99_MATH)
-  message (FATAL_ERROR "Missing C99 math functions")
-endif ()
-
 if (CONVERT_WARNINGS_TO_ERRORS)
   if (MSVC)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /WX")
@@ -76,20 +58,22 @@ if (CONVERT_WARNINGS_TO_ERRORS)
 endif ()
 
 set (LIBNAME geodc)
-set (TOOLS direct inverse planimeter geodtest)
+set (TOOLS direct inverse planimeter)
+set (TESTS geodtest signtest)
 
 if (MSVC OR CMAKE_CONFIGURATION_TYPES)
   # Add _d suffix for your debug versions of the tools
-  set_target_properties (${TOOLS} PROPERTIES
-    DEBUG_POSTFIX _d)
+  set_target_properties (${TOOLS} PROPERTIES DEBUG_POSTFIX _d)
 endif ()
 
 add_subdirectory (src)
 add_subdirectory (tools)
+add_subdirectory (tests)
 
 enable_testing ()
 # Run the test suite
 add_test (NAME geodtest COMMAND geodtest)
+add_test (NAME signtest COMMAND signtest)
 
 # The documentation depends on doxygen.
 if (BUILD_DOCUMENTATION)
@@ -98,3 +82,26 @@ if (BUILD_DOCUMENTATION)
   find_package (Doxygen 1.8.7 REQUIRED)
   add_subdirectory (doc)
 endif ()
+
+# The configuration of CPack is via variables that need to be set before
+# the include (CPack).
+set (CPACK_PACKAGE_CONTACT charles@karney.com)
+set (CPACK_PACKAGE_VENDOR "GeographicLib-C")
+set (CPACK_PACKAGE_DESCRIPTION_SUMMARY
+  "GeographicLib C library and documentation")
+# The list of files to be excluded from the source distribution.
+set (CPACK_SOURCE_IGNORE_FILES
+  "#"
+  "~\$"
+  "/\\\\.git"
+  "${PROJECT_SOURCE_DIR}/BUILD")
+set (CPACK_SOURCE_GENERATOR TGZ)
+
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+
+set (CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME}-${PROJECT_VERSION}")
+set (CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
+
+include (CPack)

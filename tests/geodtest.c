@@ -9,8 +9,6 @@
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
 
-/** @cond SKIP */
-
 #include "geodesic.h"
 #include <stdio.h>
 #include <math.h>
@@ -1140,5 +1138,3 @@ int main() {
   if ((i = Planimeter29())) {++n; printf("Planimeter29 fail: %d\n", i);}
   return n;
 }
-
-/** @endcond */

@@ -25,7 +25,6 @@
 
 #include "geodesic.h"
 #include <math.h>
-#include <limits.h>
 #include <float.h>
 
 #if !defined(__cplusplus)
@@ -56,7 +55,17 @@ static unsigned digits, maxit1, maxit2;
 static real epsilon, realmin, pi, degree, NaN,
   tiny, tol0, tol1, tol2, tolb, xthresh;
 
-static void Init(void) {
+/* Prefix some routines with "geod_" and expose in the library so that test
+   programs can access them. */
+#define Init         geod_Init
+#define sumx         geod_sum
+#define AngNormalize geod_AngNormalize
+#define AngDiff      geod_AngDiff
+#define AngRound     geod_AngRound
+#define sincosdx     geod_sincosd
+#define atan2dx      geod_atan2d
+
+void Init(void) {
   if (!init) {
     digits = DBL_MANT_DIG;
     epsilon = DBL_EPSILON;
@@ -97,7 +106,7 @@ enum captype {
 
 static real sq(real x) { return x * x; }
 
-static real sumx(real u, real v, real* t) {
+real sumx(real u, real v, real* t) {
   volatile real s = u + v;
   volatile real up = s - v;
   volatile real vpp = s - up;
@@ -144,7 +153,7 @@ static void norm2(real* sinx, real* cosx) {
   *cosx /= r;
 }
 
-static real AngNormalize(real x) {
+real AngNormalize(real x) {
   x = remainder(x, (real)(360));
   return x != -180 ? x : 180;
 }
@@ -152,7 +161,7 @@ static real AngNormalize(real x) {
 static real LatFix(real x)
 { return fabs(x) > 90 ? NaN : x; }
 
-static real AngDiff(real x, real y, real* e) {
+real AngDiff(real x, real y, real* e) {
   real t, d = AngNormalize(sumx(AngNormalize(-x), AngNormalize(y), &t));
   /* Here y - x = d + t (mod 360), exactly, where d is in (-180,180] and
    * abs(t) <= eps (eps = 2^-45 for doubles).  The only case where the
@@ -163,7 +172,7 @@ static real AngDiff(real x, real y, real* e) {
   return sumx(d == 180 && t > 0 ? -180 : d, t, e);
 }
 
-static real AngRound(real x) {
+real AngRound(real x) {
   /* False positive in cppcheck requires "(real)(1)" instead of "1" */
   const real z = (real)(1)/(real)(16);
   volatile real y;
@@ -174,7 +183,7 @@ static real AngRound(real x) {
   return x < 0 ? -y : y;
 }
 
-static void sincosdx(real x, real* sinx, real* cosx) {
+void sincosdx(real x, real* sinx, real* cosx) {
   /* In order to minimize round-off errors, this function exactly reduces
    * the argument to the range [-45, 45] before converting it to radians. */
   real r, s, c; int q = 0;
@@ -192,7 +201,7 @@ static void sincosdx(real x, real* sinx, real* cosx) {
   if (x != 0) { *sinx += (real)(0); *cosx += (real)(0); }
 }
 
-static real atan2dx(real y, real x) {
+real atan2dx(real y, real x) {
   /* In order to minimize round-off errors, this function rearranges the
    * arguments so that result of atan2 is in the range [-pi/4, pi/4] before
    * converting it to degrees and mapping the result to the correct

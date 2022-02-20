@@ -926,6 +926,18 @@ extern "C" {
     GEOD_LONG_UNROLL  = 1U<<15  /**< Unroll the longitude */
   };
 
+  /**< @cond SKIP */
+#if defined(GEODESIC_TESTING) && GEODESIC_TESTING
+  void   geod_Init(void);
+  double geod_sum(double u, double v, double* t);
+  double geod_AngNormalize(double x);
+  double geod_AngDiff(double x, double y, double* e);
+  double geod_AngRound(double x);
+  void   geod_sincosd(double x, double* sinx, double* cosx);
+  double geod_atan2d(double y, double x);
+#endif
+  /**< @endcond */
+
 #if defined(__cplusplus)
 }
 #endif
