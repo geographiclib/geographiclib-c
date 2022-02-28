@@ -18,7 +18,7 @@
  *
  * See the comments in geodesic.h for documentation.
  *
- * Copyright (c) Charles Karney (2012-2021) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2012-2022) <charles@karney.com> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  */
@@ -112,7 +112,7 @@ real sumx(real u, real v, real* t) {
   volatile real vpp = s - up;
   up -= u;
   vpp -= v;
-  if (t) *t = -(up + vpp);
+  if (t) *t = s ? 0 - (up + vpp) : s;
   /* error-free sum:
    * u + v =       s      + t
    *       = round(u + v) + t */
@@ -124,13 +124,6 @@ static real polyval(int N, const real p[], real x) {
   while (--N >= 0) y = y * x + *p++;
   return y;
 }
-
-/* mimic C++ std::min and std::max */
-static real minx(real a, real b)
-{ return (b < a) ? b : a; }
-
-static real maxx(real a, real b)
-{ return (a < b) ? b : a; }
 
 static void swapx(real* x, real* y)
 { real t = *x; *x = *y; *y = t; }
@@ -154,33 +147,37 @@ static void norm2(real* sinx, real* cosx) {
 }
 
 real AngNormalize(real x) {
-  x = remainder(x, (real)(360));
-  return x != -180 ? x : 180;
+  real y = remainder(x, (real)(360));
+  return fabs(y) == (real)(180) ? copysign((real)(180), x) : y;
 }
 
 static real LatFix(real x)
 { return fabs(x) > 90 ? NaN : x; }
 
 real AngDiff(real x, real y, real* e) {
-  real t, d = AngNormalize(sumx(AngNormalize(-x), AngNormalize(y), &t));
-  /* Here y - x = d + t (mod 360), exactly, where d is in (-180,180] and
-   * abs(t) <= eps (eps = 2^-45 for doubles).  The only case where the
-   * addition of t takes the result outside the range (-180,180] is d = 180
-   * and t > 0.  The case, d = -180 + eps, t = -eps, can't happen, since
-   * sum would have returned the exact result in such a case (i.e., given t
-   * = 0). */
-  return sumx(d == 180 && t > 0 ? -180 : d, t, e);
+  /* Use remainder instead of AngNormalize, since we treat boundary cases
+   * later taking account of the error */
+  real t, d = remainder(sumx(remainder(-x, (real)(360)),
+                             remainder( y, (real)(360)), &t), (real)(360));
+  /* This second sum can only change d if abs(d) < 128, so don't need to
+   * apply remainder yet again. */
+  d = sumx(d, t, &t);
+  /* Fix the sign if d = -180, 0, 180. */
+  if (d == 0 || fabs(d) == 180)
+    /* If t == 0, take sign from y - x
+     * else (t != 0, implies d = +/-180), d and t must have opposite signs */
+    d = copysign(d, t == 0 ? y - x : -t);
+  if (e) *e = t;
+  return d;
 }
 
 real AngRound(real x) {
   /* False positive in cppcheck requires "(real)(1)" instead of "1" */
   const real z = (real)(1)/(real)(16);
-  volatile real y;
-  if (x == 0) return 0;
-  y = fabs(x);
+  volatile real y = fabs(x);
   /* The compiler mustn't "simplify" z - (z - y) to y */
   y = y < z ? z - (z - y) : y;
-  return x < 0 ? -y : y;
+  return copysign(y, x);
 }
 
 void sincosdx(real x, real* sinx, real* cosx) {
@@ -198,7 +195,10 @@ void sincosdx(real x, real* sinx, real* cosx) {
   case 2U: *sinx = -s; *cosx = -c; break;
   default: *sinx = -c; *cosx =  s; break; /* case 3U */
   }
-  if (x != 0) { *sinx += (real)(0); *cosx += (real)(0); }
+  /* http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1950.pdf */
+  *cosx += 0;                   /* special values from F.10.1.12 */
+  /* special values from F.10.1.13 */
+  if (*sinx == 0) *sinx = copysign(*sinx, x);
 }
 
 real atan2dx(real y, real x) {
@@ -208,16 +208,11 @@ real atan2dx(real y, real x) {
    * quadrant. */
   int q = 0; real ang;
   if (fabs(y) > fabs(x)) { swapx(&x, &y); q = 2; }
-  if (x < 0) { x = -x; ++q; }
+  if (signbit(x)) { x = -x; ++q; }
   /* here x >= 0 and x >= abs(y), so angle is in [-pi/4, pi/4] */
   ang = atan2(y, x) / degree;
   switch (q) {
-    /* Note that atan2d(-0.0, 1.0) will return -0.  However, we expect that
-     * atan2d will not be called with y = -0.  If need be, include
-     *
-     *   case 0: ang = 0 + ang; break;
-     */
-  case 1: ang = (y >= 0 ? 180 : -180) - ang; break;
+  case 1: ang = (signbit(y) ? -180 : 180) - ang; break;
   case 2: ang =  90 - ang; break;
   case 3: ang = -90 + ang; break;
   default: break;
@@ -310,7 +305,7 @@ void geod_init(struct geod_geodesic* g, real a, real f) {
    * 0.1 is a safety factor (error decreased by 100) and max(0.001, abs(f))
    * stops etol2 getting too large in the nearly spherical case. */
   g->etol2 = 0.1 * tol2 /
-    sqrt( maxx((real)(0.001), fabs(g->f)) * minx((real)(1), 1 - g->f/2) / 2 );
+    sqrt( fmax((real)(0.001), fabs(g->f)) * fmin((real)(1), 1 - g->f/2) / 2 );
 
   A3coeff(g);
   C3coeff(g);
@@ -341,7 +336,7 @@ static void geod_lineinit_int(struct geod_geodesicline* l,
 
   sincosdx(AngRound(l->lat1), &sbet1, &cbet1); sbet1 *= l->f1;
   /* Ensure cbet1 = +epsilon at poles */
-  norm2(&sbet1, &cbet1); cbet1 = maxx(tiny, cbet1);
+  norm2(&sbet1, &cbet1); cbet1 = fmax(tiny, cbet1);
   l->dn1 = sqrt(1 + g->ep2 * sq(sbet1));
 
   /* Evaluate alp0 from sin(alp1) * cos(bet1) = sin(alp0), */
@@ -752,11 +747,11 @@ static real geod_geninverse_int(const struct geod_geodesic* g,
 
   sincosdx(lat1, &sbet1, &cbet1); sbet1 *= g->f1;
   /* Ensure cbet1 = +epsilon at poles */
-  norm2(&sbet1, &cbet1); cbet1 = maxx(tiny, cbet1);
+  norm2(&sbet1, &cbet1); cbet1 = fmax(tiny, cbet1);
 
   sincosdx(lat2, &sbet2, &cbet2); sbet2 *= g->f1;
   /* Ensure cbet2 = +epsilon at poles */
-  norm2(&sbet2, &cbet2); cbet2 = maxx(tiny, cbet2);
+  norm2(&sbet2, &cbet2); cbet2 = fmax(tiny, cbet2);
 
   /* If cbet1 < -sbet1, then cbet2 - cbet1 is a sensitive measure of the
    * |bet1| - |bet2|.  Alternatively (cbet1 >= -sbet1), abs(sbet2) + sbet1 is
@@ -793,7 +788,7 @@ static real geod_geninverse_int(const struct geod_geodesic* g,
     ssig2 = sbet2; csig2 = calp2 * cbet2;
 
     /* sig12 = sig2 - sig1 */
-    sig12 = atan2(maxx((real)(0), csig1 * ssig2 - ssig1 * csig2),
+    sig12 = atan2(fmax((real)(0), csig1 * ssig2 - ssig1 * csig2),
                                   csig1 * csig2 + ssig1 * ssig2);
     Lengths(g, g->n, sig12, ssig1, csig1, dn1, ssig2, csig2, dn2,
             cbet1, cbet2, &s12x, &m12x, nullptr,
@@ -1307,9 +1302,9 @@ real InverseStart(const struct geod_geodesic* g,
     if (y > -tol1 && x > -1 - xthresh) {
       /* strip near cut */
       if (g->f >= 0) {
-        salp1 = minx((real)(1), -(real)(x)); calp1 = - sqrt(1 - sq(salp1));
+        salp1 = fmin((real)(1), -(real)(x)); calp1 = - sqrt(1 - sq(salp1));
       } else {
-        calp1 = maxx((real)(x > -tol1 ? 0 : -1), (real)(x));
+        calp1 = fmax((real)(x > -tol1 ? 0 : -1), (real)(x));
         salp1 = sqrt(1 - sq(calp1));
       }
     } else {
@@ -1434,11 +1429,11 @@ real Lambda12(const struct geod_geodesic* g,
   /* norm2(&somg2, &comg2); -- don't need to normalize! */
 
   /* sig12 = sig2 - sig1, limit to [0, pi] */
-  sig12 = atan2(maxx((real)(0), csig1 * ssig2 - ssig1 * csig2),
+  sig12 = atan2(fmax((real)(0), csig1 * ssig2 - ssig1 * csig2),
                                 csig1 * csig2 + ssig1 * ssig2);
 
   /* omg12 = omg2 - omg1, limit to [0, pi] */
-  somg12 = maxx((real)(0), comg1 * somg2 - somg1 * comg2);
+  somg12 = fmax((real)(0), comg1 * somg2 - somg1 * comg2);
   comg12 =                 comg1 * comg2 + somg1 * somg2;
   /* eta = omg12 - lam120 */
   eta = atan2(somg12 * clam120 - comg12 * slam120,

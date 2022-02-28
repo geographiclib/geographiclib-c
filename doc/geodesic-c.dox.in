@@ -11,11 +11,11 @@
 /**
 \mainpage Geodesic routines implemented in C
 \author Charles F. F. Karney (charles@karney.com)
-\version 1.52
+\version @PROJECT_VERSION@
 
 The documentation for other versions is available at
-<tt>https://geographiclib.sourceforge.io/m.nn/C</tt> for versions numbers
-<tt>m.nn</tt> &ge; 1.28.
+<tt>https://geographiclib.sourceforge.io/C/m.n/</tt> for version numbers
+<tt>m.n</tt> &ge; 1.28.
 
 \section abstract-c Abstract
 
@@ -30,10 +30,10 @@ uses ANSI C99.
 \section download-c Downloading the source
 
 The C library is part of GeographicLib which available for download at
-- <a href="https://sourceforge.net/projects/geographiclib/files/distrib/GeographicLib-1.52.tar.gz">
-  GeographicLib-1.52.tar.gz</a>
-- <a href="https://sourceforge.net/projects/geographiclib/files/distrib/GeographicLib-1.52.zip">
-  GeographicLib-1.52.zip</a>
+- <a href="https://sourceforge.net/projects/geographiclib/files/distrib/GeographicLib-@PROJECT_VERSION@.tar.gz">
+  GeographicLib-@PROJECT_VERSION@.tar.gz</a>
+- <a href="https://sourceforge.net/projects/geographiclib/files/distrib/GeographicLib-@PROJECT_VERSION@.zip">
+  GeographicLib-@PROJECT_VERSION@.zip</a>
 .
 as either a compressed tar file (tar.gz) or a zip file.  After unpacking
 the source, the C library can be found in the directory <tt>legacy/C</tt>.

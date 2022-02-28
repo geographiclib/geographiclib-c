@@ -913,12 +913,14 @@ static int Planimeter6() {
 
 static int Planimeter12() {
   /* Area of arctic circle (not really -- adjunct to rhumb-area test) */
-  double points[2][2] = {{66.562222222, 0}, {66.562222222, 180}};
+  double points[3][2] = {{66.562222222, 0},
+                         {66.562222222, 180},
+                         {66.562222222, 360}};
   struct geod_geodesic g;
   double perimeter, area;
   int result = 0;
   geod_init(&g, wgs84_a, wgs84_f);
-  planimeter(&g, points, 2, &perimeter, &area);
+  planimeter(&g, points, 3, &perimeter, &area);
   result += checkEquals(perimeter, 10465729, 1);
   result += checkEquals(area, 0, 1);
   return result;
