@@ -59,7 +59,7 @@ endif ()
 
 set (LIBNAME geodc)
 set (TOOLS direct inverse planimeter)
-set (TESTS geodtest signtest)
+set (TESTS geodtest geodsigntest)
 
 if (MSVC OR CMAKE_CONFIGURATION_TYPES)
   # Add _d suffix for your debug versions of the tools
@@ -73,7 +73,7 @@ add_subdirectory (tests)
 enable_testing ()
 # Run the test suite
 add_test (NAME geodtest COMMAND geodtest)
-add_test (NAME signtest COMMAND signtest)
+add_test (NAME signtest COMMAND geodsigntest)
 
 # The documentation depends on doxygen.
 if (BUILD_DOCUMENTATION)

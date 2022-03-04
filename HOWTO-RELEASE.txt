@@ -1,0 +1,9 @@
+Version update checks
+
+# C
+#   legacy/C/geodesic.h comment + GEODESIC_VERSION_*
+#   doc/geodesic-c.dox (date + update change log)
+# PROJ integration
+#   geodesic.[hc], geodtest.c (renamed to src/tests/geodtest.cpp)
+#   plus docs/source/geodesic.rst docs/source/apps/geod.rst
+
