@@ -157,11 +157,10 @@ static real LatFix(real x)
 real AngDiff(real x, real y, real* e) {
   /* Use remainder instead of AngNormalize, since we treat boundary cases
    * later taking account of the error */
-  real t, d = remainder(sumx(remainder(-x, 360.0),
-                             remainder( y, 360.0), &t), 360.0);
+  real t, d = sumx(remainder(-x, 360.0), remainder( y, 360.0), &t);
   /* This second sum can only change d if abs(d) < 128, so don't need to
    * apply remainder yet again. */
-  d = sumx(d, t, &t);
+  d = sumx(remainder(d, 360.0), t, &t);
   /* Fix the sign if d = -180, 0, 180. */
   if (d == 0 || fabs(d) == 180)
     /* If t == 0, take sign from y - x
@@ -201,6 +200,27 @@ void sincosdx(real x, real* sinx, real* cosx) {
   if (*sinx == 0) *sinx = copysign(*sinx, x);
 }
 
+void sincosde(real x, real t, real* sinx, real* cosx) {
+  /* In order to minimize round-off errors, this function exactly reduces
+   * the argument to the range [-45, 45] before converting it to radians. */
+  real r, s, c; int q = 0;
+  r = AngRound(remquo(x, 90.0, &q) + t);
+  /* now abs(r) <= 45 */
+  r *= degree;
+  /* Possibly could call the gnu extension sincos */
+  s = sin(r); c = cos(r);
+  switch ((unsigned)q & 3U) {
+  case 0U: *sinx =  s; *cosx =  c; break;
+  case 1U: *sinx =  c; *cosx = -s; break;
+  case 2U: *sinx = -s; *cosx = -c; break;
+  default: *sinx = -c; *cosx =  s; break; /* case 3U */
+  }
+  /* http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1950.pdf */
+  *cosx += 0;                   /* special values from F.10.1.12 */
+  /* special values from F.10.1.13 */
+  if (*sinx == 0) *sinx = copysign(*sinx, x);
+}
+
 real atan2dx(real y, real x) {
   /* In order to minimize round-off errors, this function rearranges the
    * arguments so that result of atan2 is in the range [-pi/4, pi/4] before
@@ -212,9 +232,9 @@ real atan2dx(real y, real x) {
   /* here x >= 0 and x >= abs(y), so angle is in [-pi/4, pi/4] */
   ang = atan2(y, x) / degree;
   switch (q) {
-  case 1: ang = (signbit(y) ? -180 : 180) - ang; break;
-  case 2: ang =  90 - ang; break;
-  case 3: ang = -90 + ang; break;
+  case 1: ang = copysign(180.0, y) - ang; break;
+  case 2: ang =           90       - ang; break;
+  case 3: ang =          -90       + ang; break;
   default: break;
   }
   return ang;
@@ -709,15 +729,11 @@ static real geod_geninverse_int(const struct geod_geodesic* g,
   lon12 = AngDiff(lon1, lon2, &lon12s);
   /* Make longitude difference positive. */
   lonsign = signbit(lon12) ? -1 : 1;
-  /* If very close to being on the same half-meridian, then make it so. */
-  lon12 = lonsign * AngRound(lon12);
-  lon12s = AngRound((180 - lon12) - lonsign * lon12s);
+  lon12 *= lonsign; lon12s *= lonsign;
   lam12 = lon12 * degree;
-  if (lon12 > 90) {
-    sincosdx(lon12s, &slam12, &clam12);
-    clam12 = -clam12;
-  } else
-    sincosdx(lon12, &slam12, &clam12);
+  /* Calculate sincos of lon12 + error (this applies AngRound internally). */
+  sincosde(lon12, lon12s, &slam12, &clam12);
+  lon12s = (180 - lon12) - lon12s; /* the supplementary longitude difference */
 
   /* If really close to the equator, treat as on equator. */
   lat1 = AngRound(LatFix(lat1));
@@ -763,7 +779,7 @@ static real geod_geninverse_int(const struct geod_geodesic* g,
 
   if (cbet1 < -sbet1) {
     if (cbet2 == cbet1)
-      sbet2 = signbit(sbet2) ? sbet1 : -sbet1;
+      sbet2 = copysign(sbet1, sbet2);
   } else {
     if (fabs(sbet2) == -sbet1)
       cbet2 = cbet1;

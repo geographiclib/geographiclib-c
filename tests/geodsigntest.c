@@ -21,9 +21,9 @@ typedef double T;
 
 static const T wgs84_a = 6378137, wgs84_f = 1/298.257223563; /* WGS84 */
 
-int equiv(T x, T y) {
-  return (isnan(x) && isnan(y)) ||
-    (x == y && signbit(x) == signbit(y));
+static int equiv(T x, T y) {
+  return ( (isnan(x) && isnan(y)) || (x == y && signbit(x) == signbit(y)) ) ?
+    0 : 1;
 }
 
 static int checkEquals(T x, T y, T d) {
@@ -37,7 +37,7 @@ static int checkEquals(T x, T y, T d) {
 
 #define check(expr, r) do {             \
     T s = (T)(r),  t = expr;            \
-    if (!equiv(s, t)) {                 \
+    if (equiv(s, t)) {                  \
     printf("Line %d : %s != %s (%g)\n", \
            __LINE__, #expr, #r, t);     \
       ++n;                              \
@@ -47,12 +47,12 @@ static int checkEquals(T x, T y, T d) {
 #define checksincosd(x, s, c) do {            \
     T sx, cx;                                 \
     geod_sincosd(x, &sx, &cx);                \
-    if (!equiv(s, sx)) {                      \
+    if (equiv(s, sx)) {                       \
       printf("Line %d: sin(%g) != %g (%g)\n", \
              __LINE__, x, s, sx);             \
       ++n;                                    \
     }                                         \
-    if (!equiv(c, cx)) {                      \
+    if (equiv(c, cx)) {                       \
       printf("Line %d: cos(%g) != %g (%g)\n", \
              __LINE__, x, c, cx);             \
       ++n;                                    \
@@ -139,8 +139,7 @@ int main() {
     geod_sincosd(         9.0, &s1, &c1);
     geod_sincosd(        81.0, &s2, &c2);
     geod_sincosd(-123456789.0, &s3, &c3);
-    if (!(equiv(s1, c2) && equiv(s1, s3) &&
-          equiv(s1, s3) && equiv(c1, -c3))) {
+    if ( equiv(s1, c2) + equiv(s1, s3) + equiv(c1, s2) + equiv(c1, -c3) ) {
       printf("Line %d : sincos accuracy fail\n", __LINE__);
       ++n;
     }
@@ -175,7 +174,7 @@ int main() {
 
   {
     T s = 7e-16;
-    if (!equiv( geod_atan2d(s, -1.0), 180 - geod_atan2d(s, 1.0) )) {
+    if ( equiv( geod_atan2d(s, -1.0), 180 - geod_atan2d(s, 1.0) ) ) {
       printf("Line %d : atan2d accuracy fail\n", __LINE__);
       ++n;
     }
@@ -215,6 +214,14 @@ int main() {
   check( geod_AngDiff( -eps , -180.0, &e), -180.0 );
 
   {
+    T x = 138 + 128 * eps, y = -164;
+    if ( equiv( geod_AngDiff(x, y, &e), 58 - 128 * eps ) ) {
+      printf("Line %d : AngDiff accuracy fail\n", __LINE__);
+      ++n;
+    }
+  }
+
+  {
     /* azimuth of geodesic line with points on equator determined by signs of
      * latitude
      * lat1 lat2 azi1/2 */
@@ -228,7 +235,7 @@ int main() {
     int i = 0;
     for (int k = 0; k < 2; ++k) {
       geod_inverse(&g, C[k][0], 0.0, C[k][1], 0.0, nullptr, &azi1, &azi2);
-      if (!( equiv(azi1, C[k][2]) && equiv(azi2, C[k][2]) )) ++i;
+      if ( equiv(azi1, C[k][2]) + equiv(azi2, C[k][2]) ) ++i;
     }
     if (i) {
       printf("Line %d: inverse coincident points on equator fail\n", __LINE__);
@@ -249,7 +256,6 @@ int main() {
     int i = 0;
     for (int k = 0; k < 2; ++k) {
       geod_inverse(&g, C[k][0], 0.0, C[k][1], 179.5, nullptr, &azi1, &azi2);
-      printf("XX %.3f %.3f\n", azi1, azi2);
       i += checkEquals(azi1, C[k][2], 1) + checkEquals(azi2, C[k][3], 1);
     }
     if (i) {
@@ -274,7 +280,7 @@ int main() {
     int i = 0;
     for (int k = 0; k < 4; ++k) {
       geod_inverse(&g, C[k][0], 0.0, C[k][1], C[k][2], nullptr, &azi1, &azi2);
-      if (!( equiv(azi1, C[k][3]) && equiv(azi2, C[k][4]) )) ++i;
+      if ( equiv(azi1, C[k][3]) + equiv(azi2, C[k][4]) ) ++i;
     }
     if (i) {
       printf("Line %d: inverse antipodal points on equator fail\n",
@@ -284,7 +290,7 @@ int main() {
   }
 
   {
-    /* Anipodal points on the equator with prolate ellipsoid
+    /* Antipodal points on the equator with prolate ellipsoid
      * lon2 azi1/2 */
     T C[2][2] = {
       { +180, +90 },
@@ -296,7 +302,7 @@ int main() {
     int i = 0;
     for (int k = 0; k < 2; ++k) {
       geod_inverse(&g, 0.0, 0.0, 0.0, C[k][0], nullptr, &azi1, &azi2);
-      if (!( equiv(azi1, C[k][1]) && equiv(azi2, C[k][1]) )) ++i;
+      if ( equiv(azi1, C[k][1]) + equiv(azi2, C[k][1]) ) ++i;
     }
     if (i) {
       printf("Line %d: inverse antipodal points on equator, prolate, fail\n",
@@ -308,7 +314,7 @@ int main() {
   {
     /* azimuths = +/-0 and +/-180 for the direct problem
      * azi1, lon2, azi2 */
-    T C[4][4] = {
+    T C[4][3] = {
       { +0.0, +180, +180  },
       { -0.0, -180, -180  },
       { +180 , +180, +0.0 },
@@ -322,7 +328,7 @@ int main() {
       geod_gendirect(&g, 0.0, 0.0, C[k][0], GEOD_LONG_UNROLL, 15e6,
                      nullptr, &lon2, &azi2,
                      nullptr, nullptr, nullptr, nullptr, nullptr);
-      if (!( equiv(lon2, C[k][1]) && equiv(azi2, C[k][2]) )) ++i;
+      if ( equiv(lon2, C[k][1]) + equiv(azi2, C[k][2]) ) ++i;
     }
     if (i) {
       printf("Line %d: direct azi1 = +/-0 +/-180, fail\n", __LINE__);

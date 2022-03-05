@@ -12,6 +12,7 @@ endif ()
 cmake_minimum_required (VERSION 3.13.0)
 
 option (CONVERT_WARNINGS_TO_ERRORS "Convert warnings into errors?" OFF)
+option (BUILD_DOCUMENTATION "Use doxygen to create the documentation" OFF)
 
 # Set a default build type for single-configuration cmake generators if
 # no build type is set.
