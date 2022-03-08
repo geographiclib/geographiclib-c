@@ -59,13 +59,13 @@ if (CONVERT_WARNINGS_TO_ERRORS)
 endif ()
 
 set (LIBNAME geodc)
+if (MSVC OR CMAKE_CONFIGURATION_TYPES)
+  # For multi-config systems and for Visual Studio, the debug version of
+  # the library is called Geographic_d.
+  set (CMAKE_DEBUG_POSTFIX _d)
+endif ()
 set (TOOLS direct inverse planimeter)
 set (TESTS geodtest geodsigntest)
-
-if (MSVC OR CMAKE_CONFIGURATION_TYPES)
-  # Add _d suffix for your debug versions of the tools
-  set_target_properties (${TOOLS} PROPERTIES DEBUG_POSTFIX _d)
-endif ()
 
 add_subdirectory (src)
 add_subdirectory (tools)

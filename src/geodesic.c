@@ -56,7 +56,7 @@ static real epsilon, realmin, pi, degree, NaN,
   tiny, tol0, tol1, tol2, tolb, xthresh;
 
 /* Prefix some routines with "geod_" and expose in the library so that test
-   programs can access them. */
+ * programs can access them. */
 #define Init         geod_Init
 #define sumx         geod_sum
 #define AngNormalize geod_AngNormalize
@@ -821,7 +821,7 @@ static real geod_geninverse_int(const struct geod_geodesic* g,
     if (sig12 < 1 || m12x >= 0) {
       /* Need at least 2, to handle 90 0 90 180 */
       if (sig12 < 3 * tiny ||
-          // Prevent negative s12 or m12 for short lines
+          /* Prevent negative s12 or m12 for short lines */
           (sig12 < tol0 && (s12x < 0 || m12x < 0)))
         sig12 = m12x = s12x = 0;
       m12x *= g->b;
@@ -1748,20 +1748,21 @@ int transit(real lon1, real lon2) {
   /* Return 1 or -1 if crossing prime meridian in east or west direction.
    * Otherwise return zero. */
   /* Compute lon12 the same way as Geodesic::Inverse. */
+  lon12 = AngDiff(lon1, lon2, nullptr);
   lon1 = AngNormalize(lon1);
   lon2 = AngNormalize(lon2);
-  lon12 = AngDiff(lon1, lon2, nullptr);
-  return lon1 <= 0 && lon2 > 0 && lon12 > 0 ? 1 :
-    (lon2 <= 0 && lon1 > 0 && lon12 < 0 ? -1 : 0);
+  return
+    lon12 > 0 && ((lon1 < 0 && lon2 >= 0) ||
+                  (lon1 > 0 && lon2 == 0)) ? 1 :
+    (lon12 < 0 && lon1 >= 0 && lon2 < 0 ? -1 : 0);
 }
 
 int transitdirect(real lon1, real lon2) {
   /* Compute exactly the parity of
-     int(ceil(lon2 / 360)) - int(ceil(lon1 / 360)) */
-  lon1 = remainder(lon1, 720.0);
-  lon2 = remainder(lon2, 720.0);
-  return ( (lon2 <= 0 && lon2 > -360 ? 1 : 0) -
-           (lon1 <= 0 && lon1 > -360 ? 1 : 0) );
+   *   int(floor(lon2 / 360)) - int(floor(lon1 / 360)) */
+  lon1 = remainder(lon1, 720.0); lon2 = remainder(lon2, 720.0);
+  return ( (lon2 >= 0 && lon2 < 360 ? 0 : 1) -
+           (lon1 >= 0 && lon1 < 360 ? 0 : 1) );
 }
 
 void accini(real s[]) {
@@ -1818,7 +1819,6 @@ void geod_polygon_clear(struct geod_polygon* p) {
 void geod_polygon_addpoint(const struct geod_geodesic* g,
                            struct geod_polygon* p,
                            real lat, real lon) {
-  lon = AngNormalize(lon);
   if (p->num == 0) {
     p->lat0 = p->lat = lat;
     p->lon0 = p->lon = lon;

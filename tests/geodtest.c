@@ -149,7 +149,7 @@ static int testinverse() {
 
 static int testdirect() {
   double lat1, lon1, azi1, lat2, lon2, azi2, s12, a12, m12, M12, M21, S12;
-  double lat2a, lon2a, azi2a, a12a, m12a, M12a, M21a, S12a;
+  double lat2a, lon2a, azi2a, s12a, a12a, m12a, M12a, M21a, S12a;
   struct geod_geodesic g;
   int i, result = 0;
   unsigned flags = GEOD_LONG_UNROLL;
@@ -160,10 +160,11 @@ static int testdirect() {
     s12 = testcases[i][6]; a12 = testcases[i][7]; m12 = testcases[i][8];
     M12 = testcases[i][9]; M21 = testcases[i][10]; S12 = testcases[i][11];
     a12a = geod_gendirect(&g, lat1, lon1, azi1, flags, s12,
-              &lat2a, &lon2a, &azi2a, nullptr, &m12a, &M12a, &M21a, &S12a);
+              &lat2a, &lon2a, &azi2a, &s12a, &m12a, &M12a, &M21a, &S12a);
     result += checkEquals(lat2, lat2a, 1e-13);
     result += checkEquals(lon2, lon2a, 1e-13);
     result += checkEquals(azi2, azi2a, 1e-13);
+    result += checkEquals(s12, s12a, 0);
     result += checkEquals(a12, a12a, 1e-13);
     result += checkEquals(m12, m12a, 1e-8);
     result += checkEquals(M12, M12a, 1e-15);
@@ -175,7 +176,7 @@ static int testdirect() {
 
 static int testarcdirect() {
   double lat1, lon1, azi1, lat2, lon2, azi2, s12, a12, m12, M12, M21, S12;
-  double lat2a, lon2a, azi2a, s12a, m12a, M12a, M21a, S12a;
+  double lat2a, lon2a, azi2a, s12a, a12a, m12a, M12a, M21a, S12a;
   struct geod_geodesic g;
   int i, result = 0;
   unsigned flags = GEOD_ARCMODE | GEOD_LONG_UNROLL;
@@ -185,11 +186,13 @@ static int testarcdirect() {
     lat2 = testcases[i][3]; lon2 = testcases[i][4]; azi2 = testcases[i][5];
     s12 = testcases[i][6]; a12 = testcases[i][7]; m12 = testcases[i][8];
     M12 = testcases[i][9]; M21 = testcases[i][10]; S12 = testcases[i][11];
-    geod_gendirect(&g, lat1, lon1, azi1, flags, a12,
-                   &lat2a, &lon2a, &azi2a, &s12a, &m12a, &M12a, &M21a, &S12a);
+    a12a = geod_gendirect(&g, lat1, lon1, azi1, flags, a12, &lat2a, &lon2a,
+                          &azi2a, &s12a, &m12a, &M12a, &M21a, &S12a);
     result += checkEquals(lat2, lat2a, 1e-13);
     result += checkEquals(lon2, lon2a, 1e-13);
     result += checkEquals(azi2, azi2a, 1e-13);
+    result += checkEquals(s12, s12a, 1e-8);
+    result += checkEquals(a12, a12a, 0);
     result += checkEquals(s12, s12a, 1e-8);
     result += checkEquals(m12, m12a, 1e-8);
     result += checkEquals(M12, M12a, 1e-15);
@@ -926,6 +929,21 @@ static int Planimeter12() {
   return result;
 }
 
+static int Planimeter12r() {
+  /* Area of arctic circle (not really -- adjunct to rhumb-area test) */
+  double points[3][2] = {{66.562222222, -0},
+                         {66.562222222, -180},
+                         {66.562222222, -360}};
+  struct geod_geodesic g;
+  double perimeter, area;
+  int result = 0;
+  geod_init(&g, wgs84_a, wgs84_f);
+  planimeter(&g, points, 3, &perimeter, &area);
+  result += checkEquals(perimeter, 10465729, 1);
+  result += checkEquals(area, 0, 1);
+  return result;
+}
+
 static int Planimeter13() {
   /* Check encircling pole twice */
   double points[6][2] = {{89,-360}, {89,-240}, {89,-120},
@@ -1026,7 +1044,7 @@ static int Planimeter19() {
 }
 
 static int Planimeter21() {
-  /* Some test to add code coverage: multiple circlings of pole (includes
+  /* Some tests to add code coverage: multiple circlings of pole (includes
    * Planimeter21 - Planimeter28) + invocations via testpoint and testedge. */
   struct geod_geodesic g;
   struct geod_polygon p;
@@ -1133,6 +1151,7 @@ int main() {
   if ((i = Planimeter5())) {++n; printf("Planimeter5 fail: %d\n", i);}
   if ((i = Planimeter6())) {++n; printf("Planimeter6 fail: %d\n", i);}
   if ((i = Planimeter12())) {++n; printf("Planimeter12 fail: %d\n", i);}
+  if ((i = Planimeter12r())) {++n; printf("Planimeter12r fail: %d\n", i);}
   if ((i = Planimeter13())) {++n; printf("Planimeter13 fail: %d\n", i);}
   if ((i = Planimeter15())) {++n; printf("Planimeter15 fail: %d\n", i);}
   if ((i = Planimeter19())) {++n; printf("Planimeter19 fail: %d\n", i);}
