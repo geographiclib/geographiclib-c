@@ -14,8 +14,7 @@
 \version @PROJECT_VERSION@
 
 The documentation for other versions is available at
-<tt>https://geographiclib.sourceforge.io/C/m.n/</tt> for version numbers
-<tt>m.n</tt> &ge; 1.28.
+<tt>https://geographiclib.sourceforge.io/C</tt>.
 
 \section abstract-c Abstract
 
@@ -23,32 +22,30 @@ This is a C implementation of the geodesic algorithms from
 <a href="https://geographiclib.sourceforge.io">GeographicLib</a>.  This
 is a self-contained library (requiring only the standard C math library)
 which makes it easy to do geodesic computations for an ellipsoid of
-revolution in a C program.  It is included with version 4.9.0 of
-<a href="https://proj.org">PROJ</a> (released 2014-09-13) and later.  It
-uses ANSI C99.
+revolution in a C program.  It is incorporated into
+<a href="https://proj.org/geodesic.html">PROJ</a> and many people might
+prefer to use these routines via PROJ.
 
 This an implementation in C of the geodesic algorithms described in
 - C. F. F. Karney,
   <a href="https://doi.org/10.1007/s00190-012-0578-z">
   Algorithms for geodesics</a>,
   J. Geodesy <b>87</b>, 43--55 (2013);
-  DOI: <a href="https://doi.org/10.1007/s00190-012-0578-z">
-  10.1007/s00190-012-0578-z</a>;
   <a href="https://geographiclib.sourceforge.io/misc/geod-addenda.html">
   addenda</a>.
 .
-The principal advantages of these algorithms over previous ones (e.g.,
-Vincenty, 1975) are
-- accurate to round off for |<i>f</i>| &lt; 1/50;
-- the solution of the inverse problem is always found;
-- differential and integral properties of geodesics are computed.
+Other links
+- Library documentation: https://geographiclib.sourceforge.io/C/doc
+- GIT repository: https://github.com/geographiclib/geographiclib-c
+- Source distribution:
+  https://sourceforge.net/projects/geographiclib/files/distrib-C
+- GeographicLib: https://geographiclib.sourceforge.io
 
 \section contents Contents
  - \ref intro
  - \ref proj
  - \ref standalone
  - \ref api
- - \ref external
  - \ref changes
 
 \page intro Introduction to the geodesic problem
@@ -136,6 +133,12 @@ clockwise traversal of a polygon gives a positive area).  However, if
 the polygon encircles a pole, the sum must be adjusted by
 &plusmn;<i>A</i>/2, where \e A is the area of the full ellipsoid, with
 the sign chosen to place the result in (&minus;<i>A</i>/2, <i>A</i>/2].
+
+The principal advantages of these algorithms over previous ones (e.g.,
+Vincenty, 1975) are
+- accurate to round off for |<i>f</i>| &lt; 1/50;
+- the solution of the inverse problem is always found;
+- differential and integral properties of geodesics are computed.
 
 \page proj Information for PROJ user
 
@@ -302,72 +305,11 @@ You can check the version of the geodesic library with, e.g.,
 #endif
 @endcode
 
-\page external External links
-
-- These algorithms are derived in C. F. F. Karney,
-  <a href="https://doi.org/10.1007/s00190-012-0578-z">
-  Algorithms for geodesics</a>,
-  J. Geodesy <b>87</b>, 43--55 (2013)
-  (<a href="https://geographiclib.sourceforge.io/misc/geod-addenda.html"> addenda</a>).
-- A longer paper on geodesics: C. F. F. Karney,
-   <a href="https://arxiv.org/abs/1102.1215v1">Geodesics
-   on an ellipsoid of revolution</a>,
-   Feb. 2011
-   (<a href="https://geographiclib.sourceforge.io/misc/geod-addenda.html#geod-errata">
-   errata</a>).
-- <a href="https://sourceforge.net/projects/geographiclib/">
-  Main project page</a>
-- <a href="https://geographiclib.sourceforge.io/">
-  GeographicLib web site</a>
-  - Documentation on the C++ classes: GeographicLib::Geodesic,
-    GeographicLib::GeodesicLine, GeographicLib::PolygonAreaT.
-  - The section in the GeographicLib documentation on geodesics.
-- <a href="https://sourceforge.net/p/geographiclib/code/ci/release/tree/">
-  git repository</a>
-- Implementations in various languages
-  - C++ (complete library):
-    <a href="../index.html">
-      documentation</a>,
-    <a href="https://sourceforge.net/projects/geographiclib/files/distrib">
-      download</a>;
-  - C (geodesic routines):
-    <a href="../C/index.html">
-      documentation</a>, also included with recent versions of
-    <a href="https://proj.org">
-      PROJ</a>;
-  - Fortran (geodesic routines):
-    <a href="../Fortran/index.html">
-      documentation</a>;
-  - Java (geodesic routines):
-    <a href="https://repo1.maven.org/maven2/net/sf/geographiclib/GeographicLib-Java/">
-      Maven Central package</a>,
-    <a href="../java/index.html">
-      documentation</a>;
-  - JavaScript (geodesic routines):
-    <a href="https://www.npmjs.com/package/geographiclib">
-      npm package</a>,
-    <a href="../js/index.html">
-      documentation</a>;
-  - Python (geodesic routines):
-    <a href="https://pypi.python.org/pypi/geographiclib">
-      PyPI package</a>,
-    <a href="../python/index.html">
-      documentation</a>;
-  - Matlab/Octave (geodesic and some other routines):
-    <a href="https://www.mathworks.com/matlabcentral/fileexchange/50605">
-      Matlab Central package</a>,
-    <a href="https://viewer.mathworks.com/?viewer=plain_code&url=https%3A%2F%2Fwww.mathworks.com%2Fmatlabcentral%2Fmlc-downloads%2Fdownloads%2Fsubmissions%2F50605%2Fversions%2F15%2Fcontents%2FContents.m">
-      documentation</a>;
-  - C# (.NET wrapper for complete C++ library):
-    <a href="../NET/index.html">
-      documentation</a>.
-- <a href="https://geographiclib.sourceforge.io/geodesic-papers/biblio.html">
-  A geodesic bibliography</a>.
-- The wikipedia page,
-  <a href="https://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid">
-  Geodesics on an ellipsoid</a>.
-
 \page changes Change log
+
+ - <a href="https://geographiclib.sourceforge.io/C/2.0">Version 2.0</a>
+   (released 2022-mm-dd)
+   - Major reorganatization.
 
  - <a href="https://geographiclib.sourceforge.io/1.52/C">Version 1.52</a>
    (released 2021-03-13)

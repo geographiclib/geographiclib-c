@@ -1,5 +1,5 @@
 /**
- * @file geod-example.c
+ * @file proj-example.c
  * @brief An example of computing geodesics with the PROJ library
  **********************************************************************/
 
@@ -19,7 +19,8 @@ int main (void) {
   {
     /* Use PROJ to get the ellipsoid parameters */
     PJ_CONTEXT* C = proj_context_create();
-    PJ* P = proj_create(C, "wgs84");
+    char* argv[3] = {"type=crs", "proj=longlat", "ellps=WGS84"};
+    PJ* P = proj_create_argv(C, 3, argv);
     if (P == 0) {
       fprintf(stderr, "Failed to create transformation object.\n");
       return 1;

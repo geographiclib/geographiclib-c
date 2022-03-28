@@ -642,7 +642,7 @@ WARN_LOGFILE           =
 
 INPUT                  = @PROJECT_SOURCE_DIR@/src \
                          @PROJECT_SOURCE_DIR@/tools \
-                         @PROJECT_SOURCE_DIR@/example \
+                         @PROJECT_SOURCE_DIR@/proj-example \
                          @PROJECT_BINARY_DIR@/doc/geodesic-c.dox
 
 # This tag can be used to specify the character encoding of the source files

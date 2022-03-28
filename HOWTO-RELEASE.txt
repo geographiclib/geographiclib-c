@@ -6,7 +6,7 @@ BUILD_SHARED_LIBS = ON
 Targets
   all test
   doc (if BUILD_DOCUMENTATION and doxygen found)
-  dist (does a package_source and checks for unwanted files)
+  dist (makes package_source and checks for unwanted files)
   sanitize
   stage-{doc,dist}
   deploy-{doc,dist}
@@ -38,3 +38,10 @@ PROJDIR=/scratch/PROJ
 cp src/geodesic.? $PROJDIR/src
 cp tests/geodtest.c $PROJDIR/src/tests/geodtest.cpp
 cp tests/geodsigntest.c $PROJDIR/src/tests/geodsigntest.cpp
+
+also check
+  docs/source/apps/geod.rst
+  docs/source/geodesic.rst
+  src/apps/geod_interface.cpp
+  src/init.cpp
+  src/tests/bin_geodtest.cmake
