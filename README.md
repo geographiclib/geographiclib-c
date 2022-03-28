@@ -18,4 +18,4 @@ Other links:
 * Source distribution:
   https://sourceforge.net/projects/geographiclib/files/distrib-C
 * GeographicLib: https://geographiclib.sourceforge.io
-* Author: Charles Karney <charles@karney.com>
+* Author: Charles Karney, <charles@karney.com>

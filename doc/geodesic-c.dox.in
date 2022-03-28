@@ -45,7 +45,7 @@ Other links
  - \ref intro
  - \ref proj
  - \ref standalone
- - \ref api
+ - \ref library
  - \ref changes
 
 \page intro Introduction to the geodesic problem
@@ -238,7 +238,7 @@ Licensed under the
 <a href="https://www.opensource.org/licenses/MIT">MIT/X11 License</a>; see
 <a href="https://geographiclib.sourceforge.io/html/LICENSE.txt">LICENSE.txt</a>.
 
-\page api Library documentation
+\page library Library documentation
 
 To use the library put @code{.c}
 #include "geodesic.h"
@@ -309,7 +309,31 @@ You can check the version of the geodesic library with, e.g.,
 
  - <a href="https://geographiclib.sourceforge.io/C/2.0">Version 2.0</a>
    (released 2022-mm-dd)
-   - Major reorganatization.
+   - This is a major reorganization with the C library put into its own
+     git repository, https://github.com/geographiclib/geographiclib-c.
+     Despite this, there are only reasonably minor changes to the library
+     itself.
+   - Fix bug where the solution of the inverse geodesic problem with
+     &phi;<sub>1</sub> = 0 and &phi;<sub>2</sub> = nan was treated as
+     equatorial.
+   - Updated \ref library to provide a better guide to the use of this
+     library.
+   - Add documentation and an example of using solving geodesic problems
+     with PROJ.
+   - More careful treatment of &plusmn;0&deg; and &plusmn;180&deg;.
+     - These behave consistently with taking the limits
+       - &plusmn;0 means &plusmn;&epsilon; as &epsilon; &rarr; 0+
+       - &plusmn;180 means &plusmn;(180 &minus; &epsilon;) as &epsilon;
+         &rarr; 0+
+     - As a consequence, azimuths of +0&deg; and +180&deg; are reckoned to
+       be east-going, as far as tracking the longitude with ::GEOD_LONG_UNROLL
+       and the area goes, while azimuths &minus;0&deg; and &minus;180&deg;
+       are reckoned to be west-going.
+     - When computing longitude differences, if &lambda;<sub>2</sub>
+       &minus; &lambda;<sub>1</sub> = &plusmn;180&deg; (mod 360&deg;),
+       then the sign is picked depending on the sign of the difference.
+     - A separate test suite geodsigntest has been added to check this
+       treatment.
 
  - <a href="https://geographiclib.sourceforge.io/1.52/C">Version 1.52</a>
    (released 2021-03-13)
