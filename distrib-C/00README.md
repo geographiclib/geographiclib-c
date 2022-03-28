@@ -1,8 +1,9 @@
 # C implementation of the geodesic routines in GeographicLib
 
-Note that this library is incorporated into
-[PROJ](https://proj.org/geodesic.html), and for many people using the
-geodesic routines via PROJ may be more convenient.
+This directory provide source packages for the library.  Programmers
+should download the latest `.tar.gz` file.  However, this library is
+incorporated into [PROJ](https://proj.org/geodesic.html), and for many
+people using the geodesic routines via PROJ may be more convenient.
 
 The algorithms are documented in
 
