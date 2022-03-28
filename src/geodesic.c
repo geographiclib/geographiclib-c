@@ -14,7 +14,7 @@
  *   Algorithms for geodesics,
  *   J. Geodesy <b>87</b>, 43--55 (2013);
  *   https://doi.org/10.1007/s00190-012-0578-z
- *   Addenda: https://geographiclib.sourceforge.io/geod-addenda.html
+ *   Addenda: https://geographiclib.sourceforge.io/misc/geod-addenda.html
  *
  * See the comments in geodesic.h for documentation.
  *
@@ -55,17 +55,7 @@ static unsigned digits, maxit1, maxit2;
 static real epsilon, realmin, pi, degree, NaN,
   tiny, tol0, tol1, tol2, tolb, xthresh;
 
-/* Prefix some routines with "geod_" and expose in the library so that test
- * programs can access them. */
-#define Init         geod_Init
-#define sumx         geod_sum
-#define AngNormalize geod_AngNormalize
-#define AngDiff      geod_AngDiff
-#define AngRound     geod_AngRound
-#define sincosdx     geod_sincosd
-#define atan2dx      geod_atan2d
-
-void Init(void) {
+static void Init(void) {
   if (!init) {
     digits = DBL_MANT_DIG;
     epsilon = DBL_EPSILON;
@@ -106,7 +96,7 @@ enum captype {
 
 static real sq(real x) { return x * x; }
 
-real sumx(real u, real v, real* t) {
+static real sumx(real u, real v, real* t) {
   volatile real s = u + v;
   volatile real up = s - v;
   volatile real vpp = s - up;
@@ -146,7 +136,7 @@ static void norm2(real* sinx, real* cosx) {
   *cosx /= r;
 }
 
-real AngNormalize(real x) {
+static real AngNormalize(real x) {
   real y = remainder(x, 360.0);
   return fabs(y) == 180.0 ? copysign(180.0, x) : y;
 }
@@ -154,7 +144,7 @@ real AngNormalize(real x) {
 static real LatFix(real x)
 { return fabs(x) > 90 ? NaN : x; }
 
-real AngDiff(real x, real y, real* e) {
+static real AngDiff(real x, real y, real* e) {
   /* Use remainder instead of AngNormalize, since we treat boundary cases
    * later taking account of the error */
   real t, d = sumx(remainder(-x, 360.0), remainder( y, 360.0), &t);
@@ -170,7 +160,7 @@ real AngDiff(real x, real y, real* e) {
   return d;
 }
 
-real AngRound(real x) {
+static real AngRound(real x) {
   /* False positive in cppcheck requires "1.0" instead of "1" */
   const real z = 1.0/16.0;
   volatile real y = fabs(x);
@@ -179,7 +169,7 @@ real AngRound(real x) {
   return copysign(y, x);
 }
 
-void sincosdx(real x, real* sinx, real* cosx) {
+static void sincosdx(real x, real* sinx, real* cosx) {
   /* In order to minimize round-off errors, this function exactly reduces
    * the argument to the range [-45, 45] before converting it to radians. */
   real r, s, c; int q = 0;
@@ -200,7 +190,7 @@ void sincosdx(real x, real* sinx, real* cosx) {
   if (*sinx == 0) *sinx = copysign(*sinx, x);
 }
 
-void sincosde(real x, real t, real* sinx, real* cosx) {
+static void sincosde(real x, real t, real* sinx, real* cosx) {
   /* In order to minimize round-off errors, this function exactly reduces
    * the argument to the range [-45, 45] before converting it to radians. */
   real r, s, c; int q = 0;
@@ -221,7 +211,7 @@ void sincosde(real x, real t, real* sinx, real* cosx) {
   if (*sinx == 0) *sinx = copysign(*sinx, x);
 }
 
-real atan2dx(real y, real x) {
+static real atan2dx(real y, real x) {
   /* In order to minimize round-off errors, this function rearranges the
    * arguments so that result of atan2 is in the range [-pi/4, pi/4] before
    * converting it to degrees and mapping the result to the correct

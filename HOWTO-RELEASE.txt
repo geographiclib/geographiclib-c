@@ -1,8 +1,40 @@
+CMake variables
+CONVERT_WARNINGS_TO_ERRORS = ON
+BUILD_DOCUMENTATION = ON
+BUILD_SHARED_LIBS = ON
+
+Targets
+  all test
+  doc (if BUILD_DOCUMENTATION and doxygen found)
+  dist (does a package_source and checks for unwanted files)
+  sanitize
+  stage-{doc,dist}
+  deploy-{doc,dist}
+  proj-example (uses version of library included in PROJ)
+
+not supported:
+  install (distribution is via PROJ)
+  package
+
 Version update checks
 
+Add PROJECT_VERSION_SUFFIX = "-alpha" to
+  tar package of source
+
+Do not add PROJECT_VERSION_SUFFIX to
+  unpack directory for tar package
+  documentation
+
 # C
-#   legacy/C/geodesic.h comment + GEODESIC_VERSION_*
+#   src/geodesic.h comment + GEODESIC_VERSION_*
 #   doc/geodesic-c.dox (date + update change log)
 # PROJ integration
 #   geodesic.[hc], geodtest.c (renamed to src/tests/geodtest.cpp)
 #   plus docs/source/geodesic.rst docs/source/apps/geod.rst
+
+PROJ integration...
+
+PROJDIR=/scratch/PROJ
+cp src/geodesic.? $PROJDIR/src
+cp tests/geodtest.c $PROJDIR/src/tests/geodtest.cpp
+cp tests/geodsigntest.c $PROJDIR/src/tests/geodsigntest.cpp

@@ -17,10 +17,3 @@ add_custom_command (OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/html/index.html
     ${CSOURCES}
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile > doxygen.log
   COMMENT "Generating C documentation tree")
-
-add_custom_target (distrib-doc DEPENDS doc
-  COMMAND
-  rsync -a --delete
-  html/ /home/ckarney/web/geographiclib-web/htdocs/C/${PROJECT_VERSION}/
-  COMMENT "Copying C documentation tree to staging area"
-  )

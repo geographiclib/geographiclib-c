@@ -1,5 +1,5 @@
 /**
- * \file signtest.c
+ * \file geodsigntest.c
  * \brief Test treatment of +/-0 and +/-180
  *
  * Copyright (c) Charles Karney (2022) <charles@karney.com> and licensed
@@ -7,11 +7,22 @@
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
 
-#define GEODESIC_TESTING 1
-#include "geodesic.h"
 #include <stdio.h>
 #include <math.h>
 #include <float.h>
+
+/* Include the source file for the library directly so we can access the
+ * internal (static) functions. */
+#include "geodesic.c"
+
+/* Define function names with the "geod_" prefix. */
+#define geod_Init         Init
+#define geod_sum          sumx
+#define geod_AngNormalize AngNormalize
+#define geod_AngDiff      AngDiff
+#define geod_AngRound     AngRound
+#define geod_sincosd      sincosdx
+#define geod_atan2d       atan2dx
 
 typedef double T;
 
@@ -33,7 +44,8 @@ static int checkEquals(T x, T y, T d) {
   return 1;
 }
 
-/* use "do { } while (false)" idiom so it can be punctuated like a statement. */
+/* use "do { } while (false)" idiom so it can be punctuated like a
+ * statement. */
 
 #define check(expr, r) do {             \
     T s = (T)(r),  t = expr;            \

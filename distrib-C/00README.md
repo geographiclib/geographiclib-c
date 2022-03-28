@@ -1,3 +1,15 @@
+Source code for C version of GeographicLib
+============================================
+
+Programmers should download the latest `.tar.gz` file.  These packages
+are just copies of the the git repository:
+
+> https://github.com/geographiclib/geographiclib-c
+
+For documentation, see
+
+> https://geographiclib.sourceforge.io/C/doc
+
 # C implementation of the geodesic routines in GeographicLib
 
 The algorithms are documented in
@@ -26,15 +38,3 @@ GeographicLib
 Author
 
 * Charles Karney <charles@karney.com>
-
-Source code for C version of GeographicLib
-============================================
-
-Programmers should download the latest `.tar.gz` file.  These packages
-are just copies of the the git repository:
-
-> https://github.com/geographiclib/geographiclib-c
-
-For documentation, see
-
-> https://geographiclib.sourceforge.io/C/doc
