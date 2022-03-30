@@ -12,9 +12,7 @@
 \mainpage Geodesic routines implemented in C
 \author Charles F. F. Karney (charles@karney.com)
 \version @PROJECT_VERSION@
-
-The documentation for other versions is available at
-<tt>https://geographiclib.sourceforge.io/C</tt>.
+\date 2022-mm-dd
 
 \section abstract-c Abstract
 
@@ -35,11 +33,19 @@ This an implementation in C of the geodesic algorithms described in
   addenda</a>.
 .
 Other links
-- Library documentation: https://geographiclib.sourceforge.io/C/doc
+- Library documentation (all version): https://geographiclib.sourceforge.io/C
 - GIT repository: https://github.com/geographiclib/geographiclib-c
 - Source distribution:
   https://sourceforge.net/projects/geographiclib/files/distrib-C
 - GeographicLib: https://geographiclib.sourceforge.io
+- Other implementations in:
+  <a href="https://geographiclib.sourceforge.io/C++/doc">C++</a>,
+  <a href="https://geographiclib.sourceforge.io/Fortran/doc">Fortran</a>,
+  <a href="https://geographiclib.sourceforge.io/Python/doc">Python</a>,
+  <a href="https://geographiclib.sourceforge.io/JavaScript/doc">JavaScript</a>,
+  <a href="https://geographiclib.sourceforge.io/Java/doc">Java</a>,
+  <a href="https://github.com/geographiclib/geographiclib-octave.git">
+  Octave/MATLAB</a>
 
 \section contents Contents
  - \ref intro
@@ -218,6 +224,12 @@ possibly including some options via <code>-D</code>:
 
 CMake code to *install* the library is not provided.
 
+The library consists of two files geodesic.c and geodesic.h.
+
+Licensed under the
+<a href="https://www.opensource.org/licenses/MIT">MIT/X11 License</a>; see
+<a href="https://geographiclib.sourceforge.io/html/LICENSE.txt">LICENSE.txt</a>.
+
 Also included are 3 small test programs:
  - direct.c is a simple command line utility for solving the
    direct geodesic problem;
@@ -230,13 +242,7 @@ Here, for example, is inverse.c
 \include inverse.c
 Use inverse, for example, with
 \verbatim
-echo 30 0 -29.5 179.5 | ./inverse \endverbatim
-
-The library consists of two files geodesic.c and geodesic.h.
-
-Licensed under the
-<a href="https://www.opensource.org/licenses/MIT">MIT/X11 License</a>; see
-<a href="https://geographiclib.sourceforge.io/html/LICENSE.txt">LICENSE.txt</a>.
+echo -30 0 29.5 179.5 | ./tools/inverse \endverbatim
 
 \page library Library documentation
 
@@ -248,7 +254,7 @@ this to @code{.c}
 #include <geodesic.h>
 @endcode
 
-The documention of the library is given in header file, geodesic.h.
+The documention of the library is given in the header file, geodesic.h.
 Here is a brief summary of the functions.
 
 Simple geodesic problems:

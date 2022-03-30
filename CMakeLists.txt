@@ -99,7 +99,7 @@ if (BUILD_DOCUMENTATION)
   endif ()
 endif ()
 
-if (EXISTS ${PROJECT_SOURCE_DIR}/.git AND NOT WIN32)
+if (IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git AND NOT WIN32)
   add_custom_target (checktrailingspace
     COMMAND git ls-files | xargs grep ' $$' || true
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -143,7 +143,7 @@ set (CPACK_PACKAGE_INSTALL_DIRECTORY "${PACKAGE_DIR}")
 
 include (CPack)
 
-if (EXISTS ${PROJECT_SOURCE_DIR}/.git)
+if (IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git)
 
   set (DISTRIB_DIR "${CMAKE_BINARY_DIR}/distrib")
   add_custom_target (dist
@@ -170,6 +170,7 @@ if (EXISTS ${PROJECT_SOURCE_DIR}/.git)
     set (DOCROOT $ENV{HOME}/web/geographiclib-web/htdocs/C)
     set (FRSDEPLOY ${USER}@frs.sourceforge.net:/home/frs/project/geographiclib)
     set (WEBDEPLOY ${USER},geographiclib@web.sourceforge.net:./htdocs)
+    set (PROJDIR $ENV{HOME}/git/PROJ/src)
 
     add_custom_target (stage-dist
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -192,4 +193,16 @@ if (EXISTS ${PROJECT_SOURCE_DIR}/.git)
       COMMAND ${RSYNC} --delete -av -e ssh ${DOCROOT} ${WEBDEPLOY}/)
   endif ()
 
+  if (IS_DIRECTORY ${PROJDIR}/tests)
+  add_custom_target (proj-export
+    COMMAND
+    ${CMAKE_COMMAND} -E copy_if_different src/geodesic.h ${PROJDIR}/ &&
+    ${CMAKE_COMMAND} -E copy_if_different src/geodesic.c ${PROJDIR}/ &&
+    ${CMAKE_COMMAND} -E copy_if_different
+    tests/geodtest.c ${PROJDIR}/tests/geodtest.cpp &&
+    ${CMAKE_COMMAND} -E copy_if_different
+    tests/geodsigntest.c ${PROJDIR}/tests/geodsigntest.cpp
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    COMMENT "Exporting source to ${PROJDIR}")
+  endif ()
 endif ()

@@ -1,5 +1,8 @@
 # C implementation of the geodesic routines in GeographicLib
 
+This is a library to solve geodesic problems on an ellipsoid model of
+the earth.
+
 Note that this library is incorporated into
 [PROJ](https://proj.org/geodesic.html), and for many people using the
 geodesic routines via PROJ may be more convenient.

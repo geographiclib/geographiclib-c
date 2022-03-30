@@ -12,8 +12,8 @@ add_custom_target (doc ALL
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/html/index.html)
 
 add_custom_command (OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/html/index.html
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/doxyfile
+  DEPENDS ${CSOURCES}
+    ${CMAKE_CURRENT_BINARY_DIR}/doxyfile
     ${CMAKE_CURRENT_BINARY_DIR}/geodesic-c.dox
-    ${CSOURCES}
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile > doxygen.log
   COMMENT "Generating C documentation tree")
