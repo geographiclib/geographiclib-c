@@ -28,7 +28,8 @@ Do not add PROJECT_VERSION_SUFFIX to
 
 Update version in
   src/geodesic.h GEODESIC_VERSION_*
-  doc/geodesic-c.dox (date + update change log)
+  doc/geodesic-c.dox.in (date + update change log)
+  remove alpha versions in distrib-C
 
 PROJ integration...
 

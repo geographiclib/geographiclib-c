@@ -8,7 +8,7 @@ set (PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 if (PROJECT_VERSION_PATCH GREATER 0)
   set (PROJECT_VERSION "${PROJECT_VERSION}.${PROJECT_VERSION_PATCH}")
 endif ()
-set (PROJECT_VERSION_SUFFIX "-alpha")
+set (PROJECT_VERSION_SUFFIX "")
 set (PROJECT_FULLVERSION ${PROJECT_VERSION}${PROJECT_VERSION_SUFFIX})
 cmake_minimum_required (VERSION 3.13.0)
 
@@ -130,6 +130,8 @@ set (CPACK_SOURCE_IGNORE_FILES
   "#"
   "~\$"
   "/\\\\.git"
+  "/\\\\.htaccess"
+  "${PROJECT_SOURCE_DIR}/doc/.*html"
   "${PROJECT_SOURCE_DIR}/BUILD"
   "${PROJECT_SOURCE_DIR}/distrib-C")
 set (CPACK_SOURCE_GENERATOR TGZ)
@@ -164,7 +166,7 @@ if (IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git AND NOT WIN32)
     echo "created distrib/${PACKAGE_NAME}.tar.gz")
 
   find_program (RSYNC rsync)
-  if (RSYNC)
+  if (IS_DIRECTORY ${PROJECT_SOURCE_DIR}/distrib-C AND RSYNC)
     set (USER karney)
     set (DATAROOT $ENV{HOME}/web/geographiclib-files/distrib-C)
     set (DOCROOT $ENV{HOME}/web/geographiclib-web/htdocs/C)
@@ -174,16 +176,16 @@ if (IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git AND NOT WIN32)
 
     add_custom_target (stage-dist
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      ${DISTRIB_DIR}/${PACKAGE_NAME}.tar.gz
-      ${PROJECT_SOURCE_DIR}/distrib-C/
-      COMMAND ${RSYNC} --delete -a --exclude '*~'
-      ${PROJECT_SOURCE_DIR}/distrib-C/ ${DATAROOT}/)
+        ${DISTRIB_DIR}/${PACKAGE_NAME}.tar.gz ${PROJECT_SOURCE_DIR}/distrib-C/
+      COMMAND ${RSYNC} --delete -av --exclude '*~'
+        ${PROJECT_SOURCE_DIR}/distrib-C/ ${DATAROOT}/)
     add_dependencies (stage-dist dist)
 
     if (BUILD_DOCUMENTATION)
       add_custom_target (stage-doc
-        COMMAND ${RSYNC} --delete -a
-        doc/html/ ${DOCROOT}/${PROJECT_VERSION}/)
+        COMMAND ${RSYNC} --delete -a doc/html/ ${DOCROOT}/${PROJECT_VERSION}/
+        COMMAND cd ${PROJECT_SOURCE_DIR}/doc &&
+	  ${RSYNC} --delete -av HEADER.html FOOTER.html .htaccess ${DOCROOT}/)
       add_dependencies (stage-doc doc)
     endif ()
 
@@ -194,15 +196,15 @@ if (IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git AND NOT WIN32)
   endif ()
 
   if (IS_DIRECTORY ${PROJDIR}/tests)
-  add_custom_target (stage-proj
-    COMMAND
-    ${CMAKE_COMMAND} -E copy_if_different src/geodesic.h ${PROJDIR}/ &&
-    ${CMAKE_COMMAND} -E copy_if_different src/geodesic.c ${PROJDIR}/ &&
-    ${CMAKE_COMMAND} -E copy_if_different
-    tests/geodtest.c ${PROJDIR}/tests/geodtest.cpp &&
-    ${CMAKE_COMMAND} -E copy_if_different
-    tests/geodsigntest.c ${PROJDIR}/tests/geodsigntest.cpp
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    COMMENT "Exporting source to ${PROJDIR}")
+    add_custom_target (stage-proj
+      COMMAND
+        ${CMAKE_COMMAND} -E copy_if_different src/geodesic.h ${PROJDIR}/ &&
+        ${CMAKE_COMMAND} -E copy_if_different src/geodesic.c ${PROJDIR}/ &&
+        ${CMAKE_COMMAND} -E copy_if_different
+        tests/geodtest.c ${PROJDIR}/tests/geodtest.cpp &&
+        ${CMAKE_COMMAND} -E copy_if_different
+        tests/geodsigntest.c ${PROJDIR}/tests/geodsigntest.cpp
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+      COMMENT "Exporting source to ${PROJDIR}")
   endif ()
 endif ()
