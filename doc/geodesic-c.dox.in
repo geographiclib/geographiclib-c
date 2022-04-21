@@ -12,14 +12,12 @@
 \mainpage Geodesic routines implemented in C
 \author Charles F. F. Karney (charles@karney.com)
 \version @PROJECT_VERSION@
-
-The documentation for other versions is available at
-<tt>https://geographiclib.sourceforge.io/C</tt>.
+\date 2022-04-21
 
 \section abstract-c Abstract
 
 This is a C implementation of the geodesic algorithms from
-<a href="https://geographiclib.sourceforge.io">GeographicLib</a>.  This
+<a href="../../index.html">GeographicLib</a>.  This
 is a self-contained library (requiring only the standard C math library)
 which makes it easy to do geodesic computations for an ellipsoid of
 revolution in a C program.  It is incorporated into
@@ -31,21 +29,25 @@ This an implementation in C of the geodesic algorithms described in
   <a href="https://doi.org/10.1007/s00190-012-0578-z">
   Algorithms for geodesics</a>,
   J. Geodesy <b>87</b>, 43--55 (2013);
-  <a href="https://geographiclib.sourceforge.io/misc/geod-addenda.html">
+  <a href="../../geod-addenda.html">
   addenda</a>.
 .
 Other links
-- Library documentation: https://geographiclib.sourceforge.io/C/doc
+- Library documentation (all versions):
+  <a href="../">https://geographiclib.sourceforge.io/C</a>
 - GIT repository: https://github.com/geographiclib/geographiclib-c
 - Source distribution:
   https://sourceforge.net/projects/geographiclib/files/distrib-C
-- GeographicLib: https://geographiclib.sourceforge.io
+- GeographicLib:
+  <a href="../../index.html">https://geographiclib.sourceforge.io</a>
+- The library has been implemented in a few other <a
+  href="../../doc/library.html#languages">languages</a>.
 
 \section contents Contents
  - \ref intro
  - \ref proj
  - \ref standalone
- - \ref api
+ - \ref library
  - \ref changes
 
 \page intro Introduction to the geodesic problem
@@ -180,9 +182,8 @@ latitude  longitude  azimuth
 \endverbatim
 
 Other points to note for PROJ programmers:
- - The shape of the ellipsoid is given by the flattening *f* (PROJ
-   typically uses the reciprocal of the flattening).  *f* = 0 denotes a
-   sphere.  *f* < 0 denotes a prolate ellipsoid.
+ - The shape of the ellipsoid is given by the flattening *f*.  *f* = 0
+   denotes a sphere.  *f* < 0 denotes a prolate ellipsoid.
  - The size of the ellipsoid is given by the equatorial radius *a*.
    This is usually given in meters.  However, any units may be used and
    these are the units used for all distance-like quantites computed by
@@ -191,8 +192,8 @@ Other points to note for PROJ programmers:
 
 \page standalone Use as a standalone library
 
-The PROJ library especially as provided as part of a Linux distribution,
-may lag behind the code documented here by about a year.
+The PROJ library (especially as provided as part of a Linux
+distribution) may lag behind the code documented here by about a year.
 
 Download the source code from as a tarball from
 
@@ -200,7 +201,7 @@ Download the source code from as a tarball from
 
 or check out the source code from
 
-- https://github.com/geographiclib/geographiclib-c.git
+- https://github.com/geographiclib/geographiclib-c
 
 Build the code with <a href="https://www.cmake.org">cmake</a>
 \verbatim
@@ -218,6 +219,12 @@ possibly including some options via <code>-D</code>:
 
 CMake code to *install* the library is not provided.
 
+The library consists of two files geodesic.c and geodesic.h.
+
+Licensed under the
+<a href="https://www.opensource.org/licenses/MIT">MIT/X11 License</a>; see
+<a href="../../html/LICENSE.txt">LICENSE.txt</a>.
+
 Also included are 3 small test programs:
  - direct.c is a simple command line utility for solving the
    direct geodesic problem;
@@ -230,15 +237,9 @@ Here, for example, is inverse.c
 \include inverse.c
 Use inverse, for example, with
 \verbatim
-echo 30 0 -29.5 179.5 | ./inverse \endverbatim
+echo -30 0 29.5 179.5 | ./tools/inverse \endverbatim
 
-The library consists of two files geodesic.c and geodesic.h.
-
-Licensed under the
-<a href="https://www.opensource.org/licenses/MIT">MIT/X11 License</a>; see
-<a href="https://geographiclib.sourceforge.io/html/LICENSE.txt">LICENSE.txt</a>.
-
-\page api Library documentation
+\page library Library documentation
 
 To use the library put @code{.c}
 #include "geodesic.h"
@@ -248,7 +249,7 @@ this to @code{.c}
 #include <geodesic.h>
 @endcode
 
-The documention of the library is given in header file, geodesic.h.
+The documention of the library is given in the header file, geodesic.h.
 Here is a brief summary of the functions.
 
 Simple geodesic problems:
@@ -307,23 +308,47 @@ You can check the version of the geodesic library with, e.g.,
 
 \page changes Change log
 
- - <a href="https://geographiclib.sourceforge.io/C/2.0">Version 2.0</a>
-   (released 2022-mm-dd)
-   - Major reorganatization.
+ - <a href="../2.0/index.html">Version 2.0</a>
+   (released 2022-04-21)
+   - This is a major reorganization with the C library put into its own
+     git repository, https://github.com/geographiclib/geographiclib-c.
+     Despite this, there are only reasonably minor changes to the library
+     itself.
+   - Fix bug where the solution of the inverse geodesic problem with
+     &phi;<sub>1</sub> = 0 and &phi;<sub>2</sub> = nan was treated as
+     equatorial.
+   - Updated \ref library to provide a better guide to the use of this
+     library.
+   - Add documentation and an example of using solving geodesic problems
+     with PROJ.
+   - More careful treatment of &plusmn;0&deg; and &plusmn;180&deg;.
+     - These behave consistently with taking the limits
+       - &plusmn;0 means &plusmn;&epsilon; as &epsilon; &rarr; 0+
+       - &plusmn;180 means &plusmn;(180 &minus; &epsilon;) as &epsilon;
+         &rarr; 0+
+     - As a consequence, azimuths of +0&deg; and +180&deg; are reckoned to
+       be east-going, as far as tracking the longitude with ::GEOD_LONG_UNROLL
+       and the area goes, while azimuths &minus;0&deg; and &minus;180&deg;
+       are reckoned to be west-going.
+     - When computing longitude differences, if &lambda;<sub>2</sub>
+       &minus; &lambda;<sub>1</sub> = &plusmn;180&deg; (mod 360&deg;),
+       then the sign is picked depending on the sign of the difference.
+     - A separate test suite geodsigntest has been added to check this
+       treatment.
 
- - <a href="https://geographiclib.sourceforge.io/1.52/C">Version 1.52</a>
+ - <a href="../1.52/index.html">Version 1.52</a>
    (released 2021-03-13)
    - Be more aggressive in preventing negative s12 and m12 for short lines.
    - Initialize reference argument to remquo.
    - Work around inaccurate implementation of hypot with Visual Studio
      (win32).
 
- - <a href="https://geographiclib.sourceforge.io/1.51/C">Version 1.51</a>
+ - <a href="../1.51/index.html">Version 1.51</a>
    (released 2020-11-22)
    - C99 is now required, so there's no need for private implementations
      of various routines now defined in <code>math.h</code>.
 
- - <a href="https://geographiclib.sourceforge.io/1.50/C">Version 1.50</a>
+ - <a href="../1.50/index.html">Version 1.50</a>
    (released 2019-09-22)
    - Allow arbitrarily complex polygons in geod_polygon_*.  In the case
      of self-intersecting polygons the area is accumulated
@@ -335,11 +360,11 @@ You can check the version of the geodesic library with, e.g.,
      encirclings to be wrong, sometimes resulting in an incorrect area
      if a polygon vertex had longitude = 0  (tagged v1.49.2-c).
 
- - <a href="https://geographiclib.sourceforge.io/1.49/C">Version 1.49</a>
+ - <a href="../1.49/index.html">Version 1.49</a>
    (released 2017-10-05)
    - Fix more warning messages from some compilers; add tests.
 
- - <a href="https://geographiclib.sourceforge.io/1.48/C">Version 1.48</a>
+ - <a href="../1.48/index.html">Version 1.48</a>
    (released 2017-04-09)
    - This is the version slated for the version of proj.4 after 4.9.4
      (tagged v1.48.1-c).
@@ -348,7 +373,7 @@ You can check the version of the geodesic library with, e.g.,
      (&minus;180&deg;, 180&deg;] (instead of
      [&minus;180&deg;, 180&deg;)).
 
- - <a href="https://geographiclib.sourceforge.io/1.47/C">Version 1.47</a>
+ - <a href="../1.47/index.html">Version 1.47</a>
    (released 2017-02-15)
    - This is the version incorporated into proj.4 version 4.9.3 (tagged
      v1.46.1-c).
@@ -357,14 +382,14 @@ You can check the version of the geodesic library with, e.g.,
    - Improve accuracy of area calculation (fixing a flaw introduced in
      version 1.46).
 
- - <a href="https://geographiclib.sourceforge.io/1.46/C">Version 1.46</a>
+ - <a href="../1.46/index.html">Version 1.46</a>
    (released 2016-02-15)
    - Add s13 and a13 to the geod_geodesicline struct.
    - Add geod_directline, geod_gendirectline, and geod_inverseline.
    - More accurate inverse solution when longitude difference is close
      to 180&deg;.
 
- - <a href="https://geographiclib.sourceforge.io/1.45/C">Version 1.45</a>
+ - <a href="../1.45/index.html">Version 1.45</a>
    (released 2015-09-30)
    - The solution of the inverse problem now correctly returns NaNs if
      one of the latitudes is a NaN.
@@ -372,7 +397,7 @@ You can check the version of the geodesic library with, e.g.,
      configuring with cmake.
    - Add geod_polygon_clear().
 
- - <a href="https://geographiclib.sourceforge.io/1.44/C">Version 1.44</a>
+ - <a href="../1.44/index.html">Version 1.44</a>
    (released 2015-08-14)
    - This is the version incorporated into proj.4 version 4.9.2.
    - Improve accuracy of calculations by evaluating trigonometric
@@ -385,11 +410,11 @@ You can check the version of the geodesic library with, e.g.,
    - The inverse calculation sets \e s12 to zero for coincident points
      at pole (instead of returning a tiny quantity).
 
- - <a href="https://geographiclib.sourceforge.io/1.40/C">Version 1.40</a>
+ - <a href="../1.40/index.html">Version 1.40</a>
    (released 2014-12-18)
    - This is the version incorporated into proj.4 version 4.9.1.
 
- - <a href="https://geographiclib.sourceforge.io/1.40/C">Version 1.32</a>
+ - <a href="../1.40/index.html">Version 1.32</a>
    (released 2013-07-12)
    - This is the version incorporated into proj.4 version 4.9.0.
 
