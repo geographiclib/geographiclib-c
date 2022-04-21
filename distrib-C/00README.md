@@ -9,8 +9,8 @@ The algorithms are documented in
 
 * C. F. F. Karney,
   [Algorithms for geodesics](https://doi.org/10.1007/s00190-012-0578-z),
-  J. Geodesy 87, 43-55 (2013);
-  [Addenda](https://geographiclib.sourceforge.io/misc/geod-addenda.html).
+  J. Geodesy **87**(1), 43–55 (2013);
+  [Addenda](https://geographiclib.sourceforge.io/geod-addenda.html).
 
 Other links:
 
@@ -19,4 +19,4 @@ Other links:
 * Source distribution:
   https://sourceforge.net/projects/geographiclib/files/distrib-C
 * GeographicLib: https://geographiclib.sourceforge.io
-* Author: Charles Karney <charles@karney.com>
+* Author: Charles Karney, <charles@karney.com>
