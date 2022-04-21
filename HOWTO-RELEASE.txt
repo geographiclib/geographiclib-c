@@ -32,7 +32,7 @@ Update version in
 
 PROJ integration...
 
-make proj-export does
+make stage-proj does
 PROJDIR=$HOME/git/PROJ
 cp -p src/geodesic.? $PROJDIR/src
 cp -p tests/geodtest.c $PROJDIR/src/tests/geodtest.cpp
@@ -44,3 +44,6 @@ also changes needed in
   src/apps/geod_interface.cpp
   src/init.cpp
   src/tests/bin_geodtest.cmake
+
+R package geosphere:
+Robert J. Hijmans <r.hijmans@gmail.com>

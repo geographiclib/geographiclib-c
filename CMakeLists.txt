@@ -143,7 +143,7 @@ set (CPACK_PACKAGE_INSTALL_DIRECTORY "${PACKAGE_DIR}")
 
 include (CPack)
 
-if (IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git)
+if (IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git AND NOT WIN32)
 
   set (DISTRIB_DIR "${CMAKE_BINARY_DIR}/distrib")
   add_custom_target (dist
@@ -194,7 +194,7 @@ if (IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git)
   endif ()
 
   if (IS_DIRECTORY ${PROJDIR}/tests)
-  add_custom_target (proj-export
+  add_custom_target (stage-proj
     COMMAND
     ${CMAKE_COMMAND} -E copy_if_different src/geodesic.h ${PROJDIR}/ &&
     ${CMAKE_COMMAND} -E copy_if_different src/geodesic.c ${PROJDIR}/ &&
