@@ -7,6 +7,9 @@ Note that this library is incorporated into
 [PROJ](https://proj.org/geodesic.html), and for many people using the
 geodesic routines via PROJ may be more convenient.
 
+Licensed under the MIT/X11 License; see
+[LICENSE.txt](https://geographiclib.sourceforge.io/LICENSE.txt).
+
 The algorithms are documented in
 
 * C. F. F. Karney,
