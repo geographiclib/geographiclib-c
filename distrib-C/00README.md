@@ -15,7 +15,7 @@ The algorithms are documented in
 Other links:
 
 * Library documentation: https://geographiclib.sourceforge.io/C/doc
-* GIT repository: https://github.com/geographiclib/geographiclib-c
+* Git repository: https://github.com/geographiclib/geographiclib-c
 * Source distribution:
   https://sourceforge.net/projects/geographiclib/files/distrib-C
 * GeographicLib: https://geographiclib.sourceforge.io

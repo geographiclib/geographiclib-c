@@ -35,7 +35,7 @@ This an implementation in C of the geodesic algorithms described in
 Other links
 - Library documentation (all versions):
   <a href="../">https://geographiclib.sourceforge.io/C</a>
-- GIT repository: https://github.com/geographiclib/geographiclib-c
+- Git repository: https://github.com/geographiclib/geographiclib-c
   Releases are tagged in git as, e.g., v1.52, v2.0, etc.
 - Source distribution:
   https://sourceforge.net/projects/geographiclib/files/distrib-C
@@ -308,6 +308,12 @@ You can check the version of the geodesic library with, e.g.,
 @endcode
 
 \page changes Change log
+
+ - <a href="../2.0.1/index.html">Version 2.0.1</a>
+   (released 20yy-mm-dd)
+   - Minor improvement in the logic for the geodesic inverse problem.
+   - Allow for buggy remquo in geodsigntest.c.
+   - TODO: Relax overly strict convergence test for inverse problem in.
 
  - <a href="../2.0/index.html">Version 2.0</a>
    (released 2022-04-21)

@@ -897,18 +897,20 @@ static double geod_geninverse_int(const struct geod_geodesic* g,
         if (numit < maxit1 && dv > 0) {
           double
             dalp1 = -v/dv;
-          double
-            sdalp1 = sin(dalp1), cdalp1 = cos(dalp1),
-            nsalp1 = salp1 * cdalp1 + calp1 * sdalp1;
-          if (nsalp1 > 0 && fabs(dalp1) < pi) {
-            calp1 = calp1 * cdalp1 - salp1 * sdalp1;
-            salp1 = nsalp1;
-            norm2(&salp1, &calp1);
-            /* In some regimes we don't get quadratic convergence because
-             * slope -> 0.  So use convergence conditions based on epsilon
-             * instead of sqrt(epsilon). */
-            tripn = fabs(v) <= 16 * tol0;
-            continue;
+          if (fabs(dalp1) < pi) {
+            double
+              sdalp1 = sin(dalp1), cdalp1 = cos(dalp1),
+              nsalp1 = salp1 * cdalp1 + calp1 * sdalp1;
+            if (nsalp1 > 0) {
+              calp1 = calp1 * cdalp1 - salp1 * sdalp1;
+              salp1 = nsalp1;
+              norm2(&salp1, &calp1);
+              /* In some regimes we don't get quadratic convergence because
+               * slope -> 0.  So use convergence conditions based on epsilon
+               * instead of sqrt(epsilon). */
+              tripn = fabs(v) <= 16 * tol0;
+              continue;
+            }
           }
         }
         /* Either dv was not positive or updated value was outside legal

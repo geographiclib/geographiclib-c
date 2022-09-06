@@ -36,8 +36,7 @@ PROJ integration...
 make stage-proj does
 PROJDIR=$HOME/git/PROJ
 cp -p src/geodesic.? $PROJDIR/src
-cp -p tests/geodtest.c $PROJDIR/src/tests/geodtest.cpp
-cp -P tests/geodsigntest.c $PROJDIR/src/tests/geodsigntest.cpp
+cp -p tests/geod{,sign}test.c $PROJDIR/src/tests/
 
 also changes needed in
   docs/source/apps/geod.rst
@@ -45,6 +44,8 @@ also changes needed in
   src/apps/geod_interface.cpp
   src/init.cpp
   src/tests/bin_geodtest.cmake
+
+After release, issue a PR for PROJ
 
 R package geosphere:
 Robert J. Hijmans <r.hijmans@gmail.com>

@@ -21,7 +21,7 @@ The algorithms are documented in
 
 * Library documentation: https://geographiclib.sourceforge.io/C/doc
 * Change log: https://geographiclib.sourceforge.io/C/doc/changes.html
-* GIT repository: https://github.com/geographiclib/geographiclib-c
+* Git repository: https://github.com/geographiclib/geographiclib-c
   Releases are tagged in git as, e.g., [`v1.52`](../../tree/v1.52),
   [`v2.0`](../../tree/v2.0), etc.
 * Source distribution:
