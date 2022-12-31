@@ -31,7 +31,7 @@ int main (void) {
     proj_context_destroy(C);
   }
   /* Initialize geodesic */
-  geod_init(&g, a, 1/invf);
+  geod_init(&g, a, invf != 0 ? 1/invf : 0);
   /* Don't need GEOD_DISTANCE_IN if using GEOD_ARCMODE */
   geod_inverseline(&l, &g, 33.94, -118.41, -43.49, 172.53,
                    GEOD_LATITUDE | GEOD_LONGITUDE | GEOD_AZIMUTH);

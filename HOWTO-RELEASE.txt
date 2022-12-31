@@ -42,10 +42,14 @@ also changes needed in
   docs/source/apps/geod.rst
   docs/source/geodesic.rst
   src/apps/geod_interface.cpp
+  src/apps/bin_geod.cmake
   src/init.cpp
-  src/tests/bin_geodtest.cmake
+  src/tests/CMakeLists.txt
 
 After release, issue a PR for PROJ
 
 R package geosphere:
 Robert J. Hijmans <r.hijmans@gmail.com>
+
+Notify @xylar about need for updated patch for
+https://github.com/conda-forge/proj.4-feedstock
