@@ -1,5 +1,5 @@
-project (proj-example C)
 cmake_minimum_required (VERSION 3.13.0)
+project (proj-example C)
 
 find_package (PROJ REQUIRED)
 

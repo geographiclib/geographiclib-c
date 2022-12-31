@@ -12,7 +12,7 @@
 \mainpage Geodesic routines implemented in C
 \author Charles F. F. Karney (charles@karney.com)
 \version @PROJECT_VERSION@
-\date 2022-04-21
+\date 2023-mm-dd
 
 \section abstract-c Abstract
 
@@ -309,11 +309,11 @@ You can check the version of the geodesic library with, e.g.,
 
 \page changes Change log
 
- - <a href="../2.0.1/index.html">Version 2.0.1</a>
-   (released 20yy-mm-dd)
+ - <a href="../2.1/index.html">Version 2.1</a>
+   (released 2023-mm-dd)
    - Minor improvement in the logic for the geodesic inverse problem.
+   - Relax overly strict convergence test for inverse problem.
    - Allow for buggy remquo in geodsigntest.c.
-   - TODO: Relax overly strict convergence test for inverse problem in.
 
  - <a href="../2.0/index.html">Version 2.0</a>
    (released 2022-04-21)
