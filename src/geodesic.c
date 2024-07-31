@@ -889,8 +889,10 @@ static double geod_geninverse_int(const struct geod_geodesic* g,
                         &eps, &domg12, numit < maxit1, &dv, Ca);
         if (tripb ||
             /* Reversed test to allow escape with NaNs */
-            !(fabs(v) >= (tripn ? 8 : 1) * tol0)
-            numit == maxit2) break;
+            !(fabs(v) >= (tripn ? 8 : 1) * tol0) ||
+            /* Enough bisections to get accurate result */
+            numit == maxit2)
+          break;
         /* Update bracketing values */
         if (v > 0 && (numit > maxit1 || calp1/salp1 > calp1b/salp1b))
           { salp1b = salp1; calp1b = calp1; }

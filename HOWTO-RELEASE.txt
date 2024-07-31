@@ -11,7 +11,7 @@ Targets
   stage-{doc,dist}
   deploy-{doc,dist}
   proj-example (uses version of library included in PROJ)
-  proj-export (copies source to PROJ)
+  stage-proj (copies source to PROJ)
 
 not supported:
   install (distribution is via PROJ)
