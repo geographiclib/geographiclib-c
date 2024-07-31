@@ -4,7 +4,7 @@
  *
  * Run these tests by configuring with cmake and running "make test".
  *
- * Copyright (c) Charles Karney (2015-2022) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2015-2022) <karney@alum.mit.edu> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  **********************************************************************/

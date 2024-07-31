@@ -121,7 +121,7 @@ endif ()
 
 # The configuration of CPack is via variables that need to be set before
 # the include (CPack).
-set (CPACK_PACKAGE_CONTACT charles@karney.com)
+set (CPACK_PACKAGE_CONTACT karney@alum.mit.edu)
 set (CPACK_PACKAGE_VENDOR "GeographicLib-C")
 set (CPACK_PACKAGE_DESCRIPTION_SUMMARY
   "GeographicLib C library and documentation")
