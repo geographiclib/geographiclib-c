@@ -858,6 +858,22 @@ static int GeodSolve96() {
   return result;
 }
 
+static int GeodSolve99() {
+  /* Test case https://github.com/geographiclib/geographiclib-js/issues/3
+   * Problem was that output of sincosd(+/-45) was inconsistent because of
+   * directed rounding by Javascript's Math.round.  C implementation was OK */
+  double azi1, azi2, s12;
+  struct geod_geodesic g;
+  int result = 0;
+  geod_init(&g, wgs84_a, wgs84_f);
+  geod_inverse(&g, 45.0, 0.0, -45.0, 179.572719,
+               &s12, &azi1, &azi2);
+  result += checkEquals(azi1,  90.00000028, 1e-8  );
+  result += checkEquals(azi2,  90.00000028, 1e-8  );
+  result += checkEquals(s12,  19987083.007, 0.5e-3);
+  return result;
+}
+
 static int Planimeter0() {
   /* Check fix for pole-encircling bug found 2011-03-16 */
   double pa[4][2] = {{89, 0}, {89, 90}, {89, 180}, {89, 270}};
@@ -1164,6 +1180,7 @@ int main() {
   if ((i = GeodSolve92())) {++n; printf("GeodSolve92 fail: %d\n", i);}
   if ((i = GeodSolve94())) {++n; printf("GeodSolve94 fail: %d\n", i);}
   if ((i = GeodSolve96())) {++n; printf("GeodSolve96 fail: %d\n", i);}
+  if ((i = GeodSolve99())) {++n; printf("GeodSolve99 fail: %d\n", i);}
   if ((i = Planimeter0())) {++n; printf("Planimeter0 fail: %d\n", i);}
   if ((i = Planimeter5())) {++n; printf("Planimeter5 fail: %d\n", i);}
   if ((i = Planimeter6())) {++n; printf("Planimeter6 fail: %d\n", i);}
