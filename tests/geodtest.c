@@ -861,7 +861,7 @@ static int GeodSolve96() {
 static int GeodSolve99() {
   /* Test case https://github.com/geographiclib/geographiclib-js/issues/3
    * Problem was that output of sincosd(+/-45) was inconsistent because of
-   * directed rounding by Javascript's Math.round.  C implementation was OK */
+   * directed rounding by Javascript's Math.round.  C implementation was OK. */
   double azi1, azi2, s12;
   struct geod_geodesic g;
   int result = 0;
