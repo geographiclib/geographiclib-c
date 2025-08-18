@@ -12,7 +12,7 @@
 \mainpage Geodesic routines implemented in C
 \author Charles F. F. Karney (karney@alum.mit.edu)
 \version @PROJECT_VERSION@
-\date 2024-mm-dd
+\date 2025-08-18
 
 \section abstract-c Abstract
 
@@ -308,6 +308,11 @@ You can check the version of the geodesic library with, e.g.,
 @endcode
 
 \page changes Change log
+
+ - <a href="../2.2/index.html">Version 2.2</a>
+   (released 2025-08-18)
+   - Fix bug in geodesic inverse problem with very prolate ellipsoids.
+   - Fix some compiling warnings.
 
  - <a href="../2.1/index.html">Version 2.1</a>
    (released 2023-01-04)
