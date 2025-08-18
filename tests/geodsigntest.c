@@ -84,7 +84,7 @@ static int checkEquals(T x, T y, T d) {
     }                                         \
   } while (0)
 
-int main() {
+int main(void) {
   T inf = INFINITY,
     nan = NAN,
     eps = DBL_EPSILON,

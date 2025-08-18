@@ -18,7 +18,7 @@
  * with lat2, lon2, azi2 (for the WGS84 ellipsoid).
  **********************************************************************/
 
-int main() {
+int main(void) {
   double a = 6378137, f = 1/298.257223563; /* WGS84 */
   double lat1, lon1, azi1, lat2, lon2, azi2, s12;
   struct geod_geodesic g;
