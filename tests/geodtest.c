@@ -4,7 +4,7 @@
  *
  * Run these tests by configuring with cmake and running "make test".
  *
- * Copyright (c) Charles Karney (2015-2022) <karney@alum.mit.edu> and licensed
+ * Copyright (c) Charles Karney (2015-2025) <karney@alum.mit.edu> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
@@ -874,6 +874,26 @@ static int GeodSolve99() {
   return result;
 }
 
+static int GeodSolve100() {
+  /* Check fix for meridional failure for a strongly prolate ellipsoid.
+   * This was caused by assuming that sig12 < 1 guarantees the meridional
+   * geodesic is shortest (even though m12 < 0).  Counter example is tested
+   * here.  Bug is not present for f >= -2, b < 3*a.  For f = -2.1 the
+   * inverse calculation for 30.61 0 30.61 180 exhibits the bug. */
+  double azi1, azi2, s12;
+  struct geod_geodesic g;
+  int result = 0;
+  geod_init(&g, 1e6, -3);
+  geod_inverse(&g, 30.0, 0.0, 30.0, 180.0,
+               &s12, &azi1, &azi2);
+  /* Sloppy bounds checking because series solution is inaccurate for
+   * ellipsoids this eccentric. */
+  result += checkEquals(azi1,  22.368806, 1.0 );
+  result += checkEquals(azi2, 157.631194, 1.0 );
+  result += checkEquals(s12,   1074081.6, 1e3 );
+  return result;
+}
+
 static int Planimeter0() {
   /* Check fix for pole-encircling bug found 2011-03-16 */
   double pa[4][2] = {{89, 0}, {89, 90}, {89, 180}, {89, 270}};
@@ -1181,6 +1201,7 @@ int main() {
   if ((i = GeodSolve94())) {++n; printf("GeodSolve94 fail: %d\n", i);}
   if ((i = GeodSolve96())) {++n; printf("GeodSolve96 fail: %d\n", i);}
   if ((i = GeodSolve99())) {++n; printf("GeodSolve99 fail: %d\n", i);}
+  if ((i = GeodSolve100())) {++n; printf("GeodSolve100 fail: %d\n", i);}
   if ((i = Planimeter0())) {++n; printf("Planimeter0 fail: %d\n", i);}
   if ((i = Planimeter5())) {++n; printf("Planimeter5 fail: %d\n", i);}
   if ((i = Planimeter6())) {++n; printf("Planimeter6 fail: %d\n", i);}

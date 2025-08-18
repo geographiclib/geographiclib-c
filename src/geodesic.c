@@ -18,7 +18,7 @@
  *
  * See the comments in geodesic.h for documentation.
  *
- * Copyright (c) Charles Karney (2012-2022) <karney@alum.mit.edu> and licensed
+ * Copyright (c) Charles Karney (2012-2025) <karney@alum.mit.edu> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  */
@@ -815,10 +815,8 @@ static double geod_geninverse_int(const struct geod_geodesic* g,
      * 0.  Test case was
      *
      *    echo 20.001 0 20.001 0 | GeodSolve -i
-     *
-     * In fact, we will have sig12 > pi/2 for meridional geodesic which is
-     * not a shortest path. */
-    if (sig12 < 1 || m12x >= 0) {
+     */
+    if (sig12 < tol2 || m12x >= 0) {
       /* Need at least 2, to handle 90 0 90 180 */
       if (sig12 < 3 * tiny ||
           /* Prevent negative s12 or m12 for short lines */
