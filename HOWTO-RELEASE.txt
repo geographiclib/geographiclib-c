@@ -31,6 +31,12 @@ Update version in
   doc/geodesic-c.dox.in (date + update change log)
   remove alpha versions in distrib-C
 
+After deployment reset link
+
+  ~/web/geographiclib-web/htdocs/C/doc
+
+to latest version.  Check in and create git tag.
+
 PROJ integration...
 
 make stage-proj does
