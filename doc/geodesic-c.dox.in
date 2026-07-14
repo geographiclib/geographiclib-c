@@ -187,7 +187,7 @@ Other points to note for PROJ programmers:
    denotes a sphere.  *f* < 0 denotes a prolate ellipsoid.
  - The size of the ellipsoid is given by the equatorial radius *a*.
    This is usually given in meters.  However, any units may be used and
-   these are the units used for all distance-like quantites computed by
+   these are the units used for all distance-like quantities computed by
    the geodesic routines.
  - All angle like quantities are expressed in degrees, *not* radians.
 
@@ -213,7 +213,7 @@ make test
 \endverbatim
 possibly including some options via <code>-D</code>:
 - <code>CONVERT_WARNINGS_TO_ERRORS</code> warnings are fatal (default ON)
-- <code>BUILD_DOCUMENTATION</code> look for doxgen and build
+- <code>BUILD_DOCUMENTATION</code> look for doxygen and build
   documentation (default ON)
 - <code>BUILD_SHARED_LIBS</code> make a shared (instead of static)
   library (default ON)
@@ -250,7 +250,7 @@ this to @code{.c}
 #include <geodesic.h>
 @endcode
 
-The documention of the library is given in the header file, geodesic.h.
+The documentation of the library is given in the header file, geodesic.h.
 Here is a brief summary of the functions.
 
 Simple geodesic problems:
@@ -258,7 +258,7 @@ Simple geodesic problems:
 - Call geod_direct() and geod_inverse() to solve the direct and inverse
   geodesic problems.
 - geod_gendirect() and geod_geninverse() are more general versions of
-  these routines which allow additional quantites, \e a12, \e m12, \e
+  these routines which allow additional quantities, \e a12, \e m12, \e
   M12, \e M21, \e S12, to be computed.  You can also specify the
   distance in the direct problem in terms of the arc length \e a12,
   instead of the distance \e s12 using the ::GEOD_ARCMODE flag.
